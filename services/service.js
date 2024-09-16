@@ -22,7 +22,7 @@ class Service {
       throw new BadRequestError("Invalid password");
 
     const authToken = this.token.generateToken({
-      id: user.public_id
+      sub: user.id
     }, '1d');
 
     return {
@@ -44,7 +44,7 @@ class Service {
     );
 
     const authToken = this.token.generateToken({
-      id: newUser.public_id
+      sub: newUser.id
     }, '1d');
 
     EventService.publish(TEST_QUEUE, {
@@ -73,7 +73,7 @@ class Service {
       );
 
       const authToken = this.token.generateToken({
-        id: newUser.public_id
+        sub: newUser.id
       }, '1d');
 
       return {
@@ -82,10 +82,10 @@ class Service {
       };
     }
     else {
-      
+
 
       const authToken = this.token.generateToken({
-        id: user.public_id
+        sub: user.id
       }, '1d');
 
       return {
@@ -115,14 +115,14 @@ class Service {
   }
 
   //createStudentProfile function is used create Student Profile  
-  async createStudentProfile(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId){
+  async createStudentProfile(firstName, lastName, contactNumber, email, gender, city, country, skills, preparingFor, workMode, preferredCity, userId) {
     const student = await this.repository.getStudent(userId);
     if (student) throw new BadRequestError("Student Profile already exists");
 
-    
-    const newStudent = await this.repository.createStudent(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
 
-    return{
+    const newStudent = await this.repository.createStudent(firstName, lastName, contactNumber, email, gender, city, country, skills, preparingFor, workMode, preferredCity, userId);
+
+    return {
       message: "Student Profile created successfully",
       newStudent
     };

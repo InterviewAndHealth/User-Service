@@ -2,36 +2,29 @@ const express = require("express");
 const { Service } = require("../services");
 const { BadRequestError, UnauthorizedError } = require("../utils/errors");
 const passport = require("passport");
-const authMiddleware = require('../middlewares/auth')
+const authMiddleware = require('../middlewares/auth');
+const validateMiddleware = require('../middlewares/validate');
+const { UserSchema } = require('../schemas')
 
 
 const router = express.Router();
 const service = new Service();
+const userSchema = new UserSchema();
 
 router.get("/", (req, res) => {
   res.json({ message: "Welcome to the users API" });
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", validateMiddleware(userSchema.loginSchema), async (req, res) => {
   const { email, password } = req.body;
-
-  if (!email || !password)
-    throw new BadRequestError("Email and password are required");
 
   const data = await service.login(email, password);
   return res.json(data);
 });
 
-router.post("/register", async (req, res) => {
+router.post("/register", validateMiddleware(userSchema.registerSchema), async (req, res) => {
   const { email, password, name } = req.body;
 
-  if (!email || !password || !name)
-    throw new BadRequestError("Email, password, and name are required");
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailRegex.test(email))
-    throw new BadRequestError("Invalid email format");
 
   const data = await service.register(email, password, name);
   return res.json(data);
@@ -83,16 +76,13 @@ router.get("/rpc", async (req, res) => {
 
 
 
-router.post("/StudentProfile",authMiddleware, async (req, res) => {
-  const { firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId } = req.body;
+router.post("/StudentProfile", authMiddleware, async (req, res) => {
+  const { firstName, lastName, contactNumber, email, gender, city, country, skills, preparingFor, workMode, preferredCity, userId } = req.body;
 
-
-  if (!firstName||!lastName||!contactNumber||!email||!gender||!city||!country||!skills||!preparingFor||!workMode||!preferredCity||!userId)
+  if (!firstName || !lastName || !contactNumber || !email || !gender || !city || !country || !skills || !preparingFor || !workMode || !preferredCity || !userId)
     throw new BadRequestError("Incomplete Data");
 
-  
-
-  const data = await service.createStudentProfile(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
+  const data = await service.createStudentProfile(firstName, lastName, contactNumber, email, gender, city, country, skills, preparingFor, workMode, preferredCity, userId);
   return res.json(data);
 
 });

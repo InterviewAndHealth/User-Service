@@ -66,7 +66,6 @@ class DB {
     const pathToSQL = path.join(__dirname, "queries", "createStudent.sql");
     const rawQuery = fs.readFileSync(pathToSQL).toString();
 
-    console.log(rawQuery);
 
     const queries = rawQuery.split(';');
 
