@@ -7,15 +7,17 @@ module.exports = async (req, res, next) => {
 
   const authToken = req.headers["authorization"]?.split(" ")[1];
 
+
   if (!authToken)
     throw new UnauthorizedError("Authentication token is required");
 
   try {
     const decodedToken = token.verifyToken(authToken);
+
     if (!decodedToken) {
       throw new Error("Invalid Authentication token");
     }
-
+    req.userId = decodedToken.sub;
     next();
   } catch (error) {
     throw new UnauthorizedError(error.message);
