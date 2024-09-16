@@ -11,3 +11,4 @@ CREATE TABLE IF NOT EXISTS users (
     CONSTRAINT users_email_unique UNIQUE (email),
     CONSTRAINT users_public_id_unique UNIQUE (public_id)
 );
+

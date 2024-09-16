@@ -25,6 +25,11 @@ class Repository {
 
     return result.rows[0];
   }
+
+  async getAllUsers(){
+    const result = await DB.query("SELECT * FROM users");
+    return result.rows;
+  }
 }
 
 module.exports = Repository;
