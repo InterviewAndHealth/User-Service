@@ -3,11 +3,13 @@ const { Repository } = require("../database");
 const { NotFoundError, BadRequestError } = require("../utils/errors");
 const { EventService, RPCService } = require("./broker");
 const { EVENT_TYPES, TEST_QUEUE, TEST_RPC } = require("../config");
+const Token = require('../utils/token')
 
 // Service will contain all the business logic
 class Service {
   constructor() {
     this.repository = new Repository();
+    this.token = new Token();
   }
 
   // Login method will be used to authenticate the user
@@ -15,17 +17,17 @@ class Service {
     const user = await this.repository.getUser(email);
 
     if (!user) throw new NotFoundError("User not found");
-    if (!bcrypt.compare(password, user.password))
+
+    if (!bcrypt.compareSync(password, user.password))
       throw new BadRequestError("Invalid password");
+
+    const authToken = this.token.generateToken({
+      id: user.public_id
+    }, '1d');
 
     return {
       message: "Login successful",
-      user: {
-        id: user.public_id,
-        email: user.email,
-        name: user.name,
-        created_at: user.created_at,
-      },
+      authToken
     };
   }
 
@@ -41,6 +43,10 @@ class Service {
       name
     );
 
+    const authToken = this.token.generateToken({
+      id: newUser.public_id
+    }, '1d');
+
     EventService.publish(TEST_QUEUE, {
       type: EVENT_TYPES.USER_CREATED,
       data: {
@@ -51,13 +57,42 @@ class Service {
 
     return {
       message: "User created successfully",
-      user: {
-        id: newUser.public_id,
-        email: newUser.email,
-        name: newUser.name,
-        created_at: newUser.created_at,
-      },
+      authToken
     };
+  }
+
+
+  async googleAuth(googleId, email, firstname, lastname) {
+    const user = await this.repository.getUser(email);
+    if (!user) {
+      const hashedPassword = await bcrypt.hash(googleId + firstname + lastname, 10);
+      const newUser = await this.repository.createUser(
+        email,
+        hashedPassword,
+        firstname + " " + lastname
+      );
+
+      const authToken = this.token.generateToken({
+        id: newUser.public_id
+      }, '1d');
+
+      return {
+        message: "User created successfully",
+        authToken
+      };
+    }
+    else {
+      
+
+      const authToken = this.token.generateToken({
+        id: user.public_id
+      }, '1d');
+
+      return {
+        message: "Login successful",
+        authToken
+      };
+    }
   }
 
   async rpc_test() {
@@ -67,6 +102,16 @@ class Service {
     });
 
     return data;
+  }
+
+  async getAllUsers() {
+    const users = await this.repository.getAllUsers();
+    return users.map((user) => ({
+      id: user.public_id,
+      email: user.email,
+      name: user.name,
+      created_at: user.created_at,
+    }));
   }
 }
 

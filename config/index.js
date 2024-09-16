@@ -25,4 +25,8 @@ module.exports = {
   TEST_RPC: process.env.TEST_RPC,
   EVENT_TYPES,
   RPC_TYPES,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
+  JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
 };
