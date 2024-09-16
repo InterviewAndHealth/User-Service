@@ -30,6 +30,30 @@ class Repository {
     const result = await DB.query("SELECT * FROM users");
     return result.rows;
   }
+
+
+// functions for insertiong in student table
+  async createStudent(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId) {
+    const result = await DB.query({
+      text: "INSERT INTO students (firstname, lastname, contactnumber, email, gender, city, country, skills, preparingfor, workmode, preferedcity, userid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *",
+      values: [
+        firstName, lastName, contactNumber, email, gender, city, country,
+        skills, preparingFor, workMode, preferredCity, userId
+      ],
+    });
+  
+    return result.rows[0];
+  }
+
+
+  async getStudent(userId) {
+    const result = await DB.query({
+      text: "SELECT * FROM students WHERE userid = $1",
+      values: [userId],
+    });
+    return result.rows[0];
+  }
+  
 }
 
 module.exports = Repository;

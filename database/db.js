@@ -31,6 +31,7 @@ class DB {
       });
 
       this.createTable();
+      this.createStudentTable();
     }
     return this.#pool.connect();
   }
@@ -57,6 +58,24 @@ class DB {
     const pathToSQL = path.join(__dirname, "queries", "drop.sql");
     const rawQuery = fs.readFileSync(pathToSQL).toString();
     const query = rawQuery.replace(/\n/g, "").replace(/\s+/g, " ");
+    return this.#pool.query(query);
+  }
+
+
+  static async createStudentTable() {
+    const pathToSQL = path.join(__dirname, "queries", "createStudent.sql");
+    const rawQuery = fs.readFileSync(pathToSQL).toString();
+
+    console.log(rawQuery);
+
+    const queries = rawQuery.split(';');
+
+    const processedQueries = queries
+      .filter(query => query.trim() !== '')
+      .map(query => query.replace(/\n/g, "").replace(/\s+/g, " "));
+
+    const query = rawQuery.replace(/\n/g, "").replace(/\s+/g, " ");
+
     return this.#pool.query(query);
   }
 }
