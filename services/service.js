@@ -113,6 +113,20 @@ class Service {
       created_at: user.created_at,
     }));
   }
+
+  //createStudentProfile function is used create Student Profile  
+  async createStudentProfile(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId){
+    const student = await this.repository.getStudent(userId);
+    if (student) throw new BadRequestError("Student Profile already exists");
+
+    
+    const newStudent = await this.repository.createStudent(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
+
+    return{
+      message: "Student Profile created successfully",
+      newStudent
+    };
+  }
 }
 
 module.exports = Service;

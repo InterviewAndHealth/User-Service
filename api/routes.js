@@ -76,4 +76,25 @@ router.get("/rpc", async (req, res) => {
   return res.json(data);
 });
 
+
+
+
+
+
+
+
+router.post("/StudentProfile",authMiddleware, async (req, res) => {
+  const { firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId } = req.body;
+
+
+  if (!firstName||!lastName||!contactNumber||!email||!gender||!city||!country||!skills||!preparingFor||!workMode||!preferredCity||!userId)
+    throw new BadRequestError("Incomplete Data");
+
+  
+
+  const data = await service.createStudentProfile(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
+  return res.json(data);
+
+});
+
 module.exports = router;
