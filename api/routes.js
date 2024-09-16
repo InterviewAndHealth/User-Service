@@ -97,4 +97,13 @@ router.post("/StudentProfile",authMiddleware, async (req, res) => {
 
 });
 
+router.put("/StudentProfile",authMiddleware, async (req, res) => {
+  const { firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId } = req.body;
+  
+
+  const data = await service.updateStudentProfile(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
+  return res.json(data);
+
+});
+
 module.exports = router;

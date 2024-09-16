@@ -127,6 +127,17 @@ class Service {
       newStudent
     };
   }
+
+
+  async updateStudentProfile(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId){
+    
+    const newStudent = await this.repository.updateStudent(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
+
+    return{
+      message: "Student Profile updated successfully",
+      newStudent
+    };
+  }
 }
 
 module.exports = Service;
