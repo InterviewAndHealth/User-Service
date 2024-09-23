@@ -15,12 +15,12 @@ class Repository {
   }
 
   // Create a new user
-  async createUser(email, password, name) {
+  async createUser(email, password) {
     const id = nanoid();
 
     const result = await DB.query({
-      text: "INSERT INTO users (public_id, email, password, name) VALUES ($1, $2, $3, $4) RETURNING *",
-      values: [id, email, password, name],
+      text: "INSERT INTO users (public_id, email, password) VALUES ($1, $2, $3) RETURNING *",
+      values: [id, email, password],
     });
 
     return result.rows[0];
@@ -33,11 +33,11 @@ class Repository {
 
 
 // functions for insertiong in student table
-  async createStudent(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId) {
+  async createStudent(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId) {
     const result = await DB.query({
-      text: "INSERT INTO students (firstname, lastname, contactnumber, email, gender, city, country, skills, preparingfor, workmode, preferedcity, userid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *",
+      text: "INSERT INTO students (firstname, lastname, contactnumber, gender, city, country, skills, preparingfor, workmode, preferedcity, userid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
       values: [
-        firstName, lastName, contactNumber, email, gender, city, country,
+        firstName, lastName, contactNumber, gender, city, country,
         skills, preparingFor, workMode, preferredCity, userId
       ],
     });
@@ -47,7 +47,7 @@ class Repository {
 
 
 
-  async updateStudent(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId) {
+  async updateStudent(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId) {
 
 
     let updates = [];
@@ -65,10 +65,10 @@ class Repository {
     updates.push(`contactnumber = $${updates.length + 1}`);
     values.push(contactNumber);
   }
-  if (email) {
-    updates.push(`email = $${updates.length + 1}`);
-    values.push(email);
-  }
+  // if (email) {
+  //   updates.push(`email = $${updates.length + 1}`);
+  //   values.push(email);
+  // }
   if (gender) {
     updates.push(`gender = $${updates.length + 1}`);
     values.push(gender);
