@@ -22,7 +22,7 @@ class Service {
       throw new BadRequestError("Invalid password");
 
     const authToken = this.token.generateToken({
-      sub: user.id
+      sub: user.public_id
     }, '1d');
 
     return {
@@ -32,7 +32,7 @@ class Service {
   }
 
   // Register method will be used to create a new user
-  async register(email, password, name) {
+  async register(email, password) {
     const user = await this.repository.getUser(email);
     if (user) throw new BadRequestError("User already exists");
 
@@ -40,11 +40,10 @@ class Service {
     const newUser = await this.repository.createUser(
       email,
       hashedPassword,
-      name
     );
 
     const authToken = this.token.generateToken({
-      sub: newUser.id
+      sub: newUser.public_id
     }, '1d');
 
     EventService.publish(TEST_QUEUE, {
@@ -115,12 +114,12 @@ class Service {
   }
 
   //createStudentProfile function is used create Student Profile  
-  async createStudentProfile(firstName, lastName, contactNumber, email, gender, city, country, skills, preparingFor, workMode, preferredCity, userId) {
+  async createStudentProfile(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, userId) {
     const student = await this.repository.getStudent(userId);
     if (student) throw new BadRequestError("Student Profile already exists");
 
 
-    const newStudent = await this.repository.createStudent(firstName, lastName, contactNumber, email, gender, city, country, skills, preparingFor, workMode, preferredCity, userId);
+    const newStudent = await this.repository.createStudent(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, userId);
 
     return {
       message: "Student Profile created successfully",
@@ -129,9 +128,9 @@ class Service {
   }
 
 
-  async updateStudentProfile(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId){
+  async updateStudentProfile(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId){
     
-    const newStudent = await this.repository.updateStudent(firstName,lastName,contactNumber,email,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
+    const newStudent = await this.repository.updateStudent(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
 
     return{
       message: "Student Profile updated successfully",
