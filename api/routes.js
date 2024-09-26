@@ -6,8 +6,7 @@ const authMiddleware = require('../middlewares/auth');
 const validateMiddleware = require('../middlewares/validate');
 const { UserSchema,StudentSchema } = require('../schemas')
 
-// const s3 = require('../config/awsconfig');
-// const upload = require('../middlewares/fileuplaod');
+
 
 const router = express.Router();
 const service = new Service();
@@ -106,51 +105,87 @@ router.put("/StudentProfile",authMiddleware, async (req, res) => {
 
 //resume routes
 
-// // Upload resume
-// router.post('/uploadresume', upload.single('resume'), async (req, res) => {
-//   const fileUrl = req.file.location;  // Multer-S3 gives the public file URL in `location`
-//  return res.json({
-//       message: 'Resume uploaded successfully',
-//       resumeUrl: fileUrl
-//   });
-// });
+const{s3,upload,uploadFileToS3}= require("../config/awsconfig")
 
-// // Update resume
-// router.post('/updateresume', upload.single('resume'),async (req, res) => {
-//   const { username, userid } = req.body;
-//   const oldFileName = `${username}-${userid}`;
 
-//   try {
-//       // Delete old file
-//       await s3.deleteObject({
-//           Bucket: process.env.AWS_S3_BUCKET_NAME,
-//           Key: oldFileName
-//       }).promise();
+// Upload resume
+router.post('/uploadresume',authMiddleware, upload.single('file'), async (req, res) => {
+  try {
+    const filePath = req.file.path;
+    const fileName = req.file.filename;
 
-//       const newFileUrl = req.file.location;
-//      return res.json({
-//           message: 'Resume updated successfully',
-//           resumeUrl: newFileUrl
-//       });
-//   } catch (error) {
-//       res.status(500).send('Error updating the resume.');
-//   }
-// });
+    console.log(filePath);
+    console.log(fileName);
+    const fileUrl = await uploadFileToS3(filePath, fileName);
+    console.log(fileUrl);
 
-// // Delete resume
-// router.delete('/deleteresume', async (req, res) => {
-//   const { username, userid } = req.body;
-//   const fileName = `${username}-${userid}`;
+    res.json({
+        message: 'Resume uploaded successfully',
+        resumeUrl: fileUrl,
+    });
+} catch (error) {
+    res.status(500).json({ error: error.message });
+}
+});
 
-//   try {
-//       await s3.deleteObject({
-//           Bucket: process.env.AWS_S3_BUCKET_NAME,
-//           Key: fileName
-//       }).promise();
-//       res.json({ message: 'Resume deleted successfully' });
-//   } catch (error) {
-//       res.status(500).send('Error deleting the resume.');
-//   }
-// });
+//Update resume
+router.post('/updateresume',authMiddleware, upload.single('file'),async (req, res) => {
+  try {
+    // const { username} = req.body;
+    const userid=req.userId
+    const oldFileName = `${userid}.${req.file.originalname.split('.').pop()}`;
+
+    const filePath = req.file.path;
+    const newFileName = req.file.filename;
+
+    // Find the old file on S3
+    const oldFile = `${oldFileName}.${req.file.originalname.split('.').pop()}`;
+
+    // Delete old file from S3 before uploading the new one
+    s3.deleteObject({
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: oldFile,
+    }, async (err) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        // Upload new file to S3
+        const fileUrl = await uploadFileToS3(filePath, newFileName);
+        res.json({
+            message: 'Resume updated successfully',
+            resumeUrl: fileUrl,
+        });
+    });
+} catch (error) {
+    res.status(500).json({ error: error.message });
+}
+});
+
+// Delete resume
+router.delete('/deleteresume',authMiddleware,upload.single('file'), async (req, res) => {
+  try {
+    const userid=req.userId
+    const fileName = `${userid}.${req.file.originalname.split('.').pop()}`;
+    const filePath = req.file.path;
+
+    // Delete the file from S3
+    s3.deleteObject({
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: fileName,
+    }, (err) => {
+        if (err,data) {
+            return res.status(500).json({ error: err.message });
+        }else {
+          //Remove the file from the local uploads folder
+          fs.unlinkSync(filePath);
+          resolve(data.Location);
+        }
+
+        res.json({ message: 'Resume deleted successfully' });
+    });
+} catch (error) {
+    res.status(500).json({ error: error.message });
+}
+});
 
 module.exports = router;

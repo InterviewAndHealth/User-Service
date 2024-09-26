@@ -5,6 +5,8 @@ const { UnauthorizedError } = require('../utils/errors')
 module.exports = async (req, res, next) => {
   const token = new Token();
 
+  console.log(req.body);
+
   const authToken = req.headers["authorization"]?.split(" ")[1];
 
 
