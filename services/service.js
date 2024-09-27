@@ -14,7 +14,10 @@ class Service {
 
   // Login method will be used to authenticate the user
   async login(email, password) {
-    const user = await this.repository.getUser(email);
+
+    try {
+
+      const user = await this.repository.getUser(email);
 
     if (!user) throw new NotFoundError("User not found");
 
@@ -29,11 +32,21 @@ class Service {
       message: "Login successful",
       authToken
     };
+      
+    } catch (error) {
+      return {
+        message: error.message,
+      };
+    }
+    
   }
 
   // Register method will be used to create a new user
   async register(email, password) {
-    const user = await this.repository.getUser(email);
+
+    try {
+
+      const user = await this.repository.getUser(email);
     if (user) throw new BadRequestError("User already exists");
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -58,6 +71,13 @@ class Service {
       message: "User created successfully",
       authToken
     };
+      
+    } catch (error) {
+      return {
+        message: error.message,
+      };
+    }
+    
   }
 
 
@@ -115,8 +135,10 @@ class Service {
 
   //createStudentProfile function is used create Student Profile  
   async createStudentProfile(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, userId) {
-    const student = await this.repository.getStudent(userId);
-    if (student) throw new BadRequestError("Student Profile already exists");
+
+    try {
+      const student = await this.repository.getStudent(userId);
+      if (student) throw new BadRequestError("Student Profile already exists");
 
 
     const newStudent = await this.repository.createStudent(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, userId);
@@ -125,17 +147,34 @@ class Service {
       message: "Student Profile created successfully",
       newStudent
     };
+      
+    } catch (error) {
+      return {
+        message: error.message,
+      };
+    }
+    
   }
 
 
   async updateStudentProfile(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId){
-    
-    const newStudent = await this.repository.updateStudent(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
+
+    try {
+
+      const newStudent = await this.repository.updateStudent(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
 
     return{
       message: "Student Profile updated successfully",
       newStudent
     };
+      
+    } catch (error) {
+      return {
+        message: error.message,
+      };
+    }
+    
+    
   }
 
 

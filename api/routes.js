@@ -83,8 +83,6 @@ router.get("/rpc", async (req, res) => {
 router.post("/StudentProfile",authMiddleware, validateMiddleware(studentSchema.profileSchema), async (req, res) => {
   const { firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity} = req.body;
 
-  // if (!firstName || !lastName || !contactNumber || !email || !gender || !city || !country || !skills || !preparingFor || !workMode || !preferredCity || !userId)
-  //   throw new BadRequestError("Incomplete Data");
   const userId=req.userId;
   const data = await service.createStudentProfile(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, userId);
   return res.json(data);
@@ -162,24 +160,27 @@ router.post('/updateresume',authMiddleware, upload.single('file'),async (req, re
 });
 
 // Delete resume
-router.delete('/deleteresume',authMiddleware,upload.single('file'), async (req, res) => {
+router.delete('/deleteresume',authMiddleware, async (req, res) => {
   try {
     const userid=req.userId
-    const fileName = `${userid}.${req.file.originalname.split('.').pop()}`;
-    const filePath = req.file.path;
+    // const fileName = `${userid}.${req.file.originalname.split('.').pop()}`;
+    const fileName = `${userid}.pdf`;
+
+    // const filePath = req.file.path;
 
     // Delete the file from S3
     s3.deleteObject({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: fileName,
     }, (err) => {
-        if (err,data) {
+        if (err) {
             return res.status(500).json({ error: err.message });
-        }else {
-          //Remove the file from the local uploads folder
-          fs.unlinkSync(filePath);
-          resolve(data.Location);
         }
+        //else {
+        //   //Remove the file from the local uploads folder
+        //   fs.unlinkSync(filePath);
+        //   resolve(data.Location);
+        // }
 
         res.json({ message: 'Resume deleted successfully' });
     });
