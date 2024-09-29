@@ -21,7 +21,7 @@ router.post("/login", validateMiddleware(userSchema.loginSchema), async (req, re
   const { email, password } = req.body;
 
   const data = await service.login(email, password);
-  return res.json(data);
+  return res.status(200).json(data);
 });
 
 router.post("/register", validateMiddleware(userSchema.registerSchema), async (req, res) => {
@@ -29,7 +29,7 @@ router.post("/register", validateMiddleware(userSchema.registerSchema), async (r
 
 
   const data = await service.register(email, password);
-  return res.json(data);
+  return res.status(201).json(data);
 });
 
 
@@ -78,14 +78,14 @@ router.get("/rpc", async (req, res) => {
 
 
 
-
+//student profile routes
 
 router.post("/StudentProfile",authMiddleware, validateMiddleware(studentSchema.profileSchema), async (req, res) => {
   const { firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity} = req.body;
 
   const userId=req.userId;
   const data = await service.createStudentProfile(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, userId);
-  return res.json(data);
+  return res.status(201).json(data);
 
 });
 
@@ -94,8 +94,14 @@ router.put("/StudentProfile",authMiddleware, async (req, res) => {
   
   const userId=req.userId;
   const data = await service.updateStudentProfile(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
-  return res.json(data);
+  return res.status(204).json(data);
 
+});
+
+router.get("/StudentProfile",authMiddleware, async (req, res) => {
+  const userId=req.userId;
+  const data = await service.getStudentProfile(userId);
+  return res.status(200).json(data);
 });
 
 
