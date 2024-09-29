@@ -123,7 +123,7 @@ router.post('/uploadresume',authMiddleware, upload.single('file'), async (req, r
     const fileUrl = await uploadFileToS3(filePath, fileName);
     console.log(fileUrl);
 
-    res.json({
+    res.status(200).json({
         message: 'Resume uploaded successfully',
         resumeUrl: fileUrl,
     });
@@ -155,7 +155,7 @@ router.post('/updateresume',authMiddleware, upload.single('file'),async (req, re
         }
         // Upload new file to S3
         const fileUrl = await uploadFileToS3(filePath, newFileName);
-        res.json({
+        res.status(201).json({
             message: 'Resume updated successfully',
             resumeUrl: fileUrl,
         });
@@ -188,7 +188,7 @@ router.delete('/deleteresume',authMiddleware, async (req, res) => {
         //   resolve(data.Location);
         // }
 
-        res.json({ message: 'Resume deleted successfully' });
+        res.status(200).json({ message: 'Resume deleted successfully' });
     });
 } catch (error) {
     res.status(500).json({ error: error.message });
