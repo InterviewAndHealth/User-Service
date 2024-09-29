@@ -1,6 +1,6 @@
 const express = require("express");
 const { PORT } = require("./config");
-require('./middlewares/passport');
+// require('./middlewares/passport');
 
 const app = express();
 
