@@ -5,7 +5,7 @@ const passport = require("passport");
 const authMiddleware = require('../middlewares/auth');
 const validateMiddleware = require('../middlewares/validate');
 const { UserSchema,StudentSchema } = require('../schemas')
-
+const{s3,upload,uploadFileToS3}= require("../config/awsconfig")
 
 
 const router = express.Router();
@@ -106,10 +106,30 @@ router.get("/StudentProfile",authMiddleware, async (req, res) => {
 
 
 
+router.post("/studentprofilewithresume",authMiddleware,upload.single('file'),validateMiddleware(studentSchema.profileSchema),async (req, res) => {
+  const { firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity} = req.body;
+
+  console.log(req.body);
+
+  const filePath = req.file.path;
+  const fileName = req.file.filename;
+
+  console.log(filePath);
+  console.log(fileName);
+
+  const resumeLink = await uploadFileToS3(filePath, fileName);
+  console.log(resumeLink);
+
+  const userId=req.userId;
+  const data = await service.createStudentProfilewithresume(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity,resumeLink, userId);
+  return res.status(201).json(data);
+
+});
+
 
 //resume routes
 
-const{s3,upload,uploadFileToS3}= require("../config/awsconfig")
+
 
 
 // Upload resume
@@ -120,7 +140,7 @@ router.post('/uploadresume',authMiddleware, upload.single('file'), async (req, r
 
     console.log(filePath);
     console.log(fileName);
-    
+
     const fileUrl = await uploadFileToS3(filePath, fileName);
     console.log(fileUrl);
 

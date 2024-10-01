@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS students (
     city VARCHAR(100) NOT NULL, 
     country VARCHAR(100) NOT NULL, 
     skills TEXT[] NOT NULL, 
-    preparingfor TEXT[] NOT NULL, 
+    preparingfor VARCHAR(100) NOT NULL, 
     workmode VARCHAR(50) NOT NULL, 
     preferedcity VARCHAR(100), 
     resumelink VARCHAR(100) DEFAULT NULL, 

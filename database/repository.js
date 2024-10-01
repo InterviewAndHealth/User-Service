@@ -144,6 +144,21 @@ class Repository {
     });
     return result.rows[0];
   }
+
+
+
+
+  async createStudentProfileWithResume(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,resumeLink,userId) {
+    const result = await DB.query({
+      text: "INSERT INTO students (firstname, lastname, contactnumber, gender, city, country, skills, preparingfor, workmode, preferedcity,resumelink, userid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *",
+      values: [
+        firstName, lastName, contactNumber, gender, city, country,
+        skills, preparingFor, workMode, preferredCity,resumeLink, userId
+      ],
+    });
+  
+    return result.rows[0];
+  }
   
 }
 

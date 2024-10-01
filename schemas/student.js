@@ -11,7 +11,7 @@ class StudentSchema {
     city: joi.string().required(),
     country: joi.string().required(),
     skills: joi.array().items(joi.string().min(2)).required(),
-    preparingFor: joi.array().items(joi.string().min(2)).required(),
+    preparingFor: joi.string().required(),
     workMode: joi.string().required(),
     preferredCity: joi.string().required(),
   })
