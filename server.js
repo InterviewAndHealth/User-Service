@@ -5,8 +5,9 @@ const error = require("./middlewares/error");
 const routes = require("./api/routes");
 const { DB } = require("./database");
 const passport = require('passport');
+const { UserService } = require("./services/rpcrespondservice");
 
-
+const RPCService = require('./services/broker/rpc');
 module.exports = async (app) => {
   await DB.connect();
 
@@ -15,4 +16,12 @@ module.exports = async (app) => {
   app.use(cors());
   app.use(routes);
   app.use(error);
+
+  console.log(UserService);
+
+  const userservice=new UserService();
+
+  await RPCService.respond(userservice);
+
+  
 };

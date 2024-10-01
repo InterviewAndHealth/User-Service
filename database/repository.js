@@ -47,7 +47,7 @@ class Repository {
 
 
 
-  async updateStudent(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId) {
+  async updateStudent(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,resumeLink,userId) {
 
 
     let updates = [];
@@ -97,6 +97,10 @@ class Repository {
     updates.push(`preferredcity = $${updates.length + 1}`);
     values.push(preferredCity);
   }
+  if (resumeLink) {
+    updates.push(`preferredcity = $${updates.length + 1}`);
+    values.push(resumeLink);
+  }
 
   // If no fields are provided for update, return an error
   if (updates.length === 0) {
@@ -125,6 +129,17 @@ class Repository {
   async getStudent(userId) {
     const result = await DB.query({
       text: "SELECT * FROM students WHERE userid = $1",
+      values: [userId],
+    });
+    return result.rows[0];
+  }
+
+
+  async getUserbyid(userId) { 
+
+    console.log(userId);
+    const result = await DB.query({
+      text: "SELECT * FROM users WHERE public_id = $1",
       values: [userId],
     });
     return result.rows[0];

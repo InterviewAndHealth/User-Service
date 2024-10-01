@@ -90,10 +90,10 @@ router.post("/StudentProfile",authMiddleware, validateMiddleware(studentSchema.p
 });
 
 router.put("/StudentProfile",authMiddleware, async (req, res) => {
-  const { firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity } = req.body;
+  const { firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,resumeLink } = req.body;
   
   const userId=req.userId;
-  const data = await service.updateStudentProfile(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
+  const data = await service.updateStudentProfile(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,resumeLink,userId);
   return res.status(204).json(data);
 
 });
@@ -120,6 +120,7 @@ router.post('/uploadresume',authMiddleware, upload.single('file'), async (req, r
 
     console.log(filePath);
     console.log(fileName);
+    
     const fileUrl = await uploadFileToS3(filePath, fileName);
     console.log(fileUrl);
 
