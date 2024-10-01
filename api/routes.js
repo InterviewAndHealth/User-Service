@@ -6,7 +6,7 @@ const authMiddleware = require('../middlewares/auth');
 const validateMiddleware = require('../middlewares/validate');
 const { UserSchema,StudentSchema } = require('../schemas')
 const{s3,upload,uploadFileToS3}= require("../config/awsconfig")
-
+const { oauth2Client } = require('../config/googleconfig');
 
 const router = express.Router();
 const service = new Service();
@@ -39,39 +39,77 @@ router.get("/allusers", authMiddleware, async (req, res) => {
   return res.json(data);
 });
 
-router.get('/google', passport.authenticate('google', {
-  scope:
-    ['email', 'profile']
-}
-));
+router.get('/google', async (req, res, next) => {
+  const code = req.body.code;
 
-router.get('/login/google/callback', passport.authenticate('google', {
-  failureRedirect: '/failure',
-  session: false
-}), async (req, res) => {
+      const googleRes = await oauth2Client.getToken(code);
+      oauth2Client.setCredentials(googleRes.tokens);
+      // const userRes = await axios.get(
+      //     `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
+      // );
 
-  if (!req.user)
-    throw new UnauthorizedError("Access Denied");
+      const userRes = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+        });
 
-  const {
-    id,
-    firstName,
-    lastName,
-    email,
-  } = req.user;
+        
 
-  const data = await service.googleAuth(id, email, firstName, lastName);
-  return res.status(200).json(data);
-})
 
-router.get("/failure", (req, res) => {
-  res.send("Failed to log in with Google.");
+      
+      const { email } = userRes.data;
+      // console.log(userRes);
+      let user = await User.findOne({ email });
+
+      if (!user) {
+          user = await User.create({
+              name,
+              email,
+              image: picture,
+          });
+      }
+      const { _id } = user;
+      const token = jwt.sign({ _id, email },
+          process.env.JWT_SECRET, {
+          expiresIn: process.env.JWT_TIMEOUT,
+      });
+      res.status(200).json({
+          message: 'success',
+          token,
+          user,
+      });
+  
 });
 
-router.get("/rpc", async (req, res) => {
-  const data = await service.rpc_test();
-  return res.json(data);
-});
+// router.get('/login/google/callback', passport.authenticate('google', {
+//   failureRedirect: '/failure',
+//   session: false
+// }), async (req, res) => {
+
+//   if (!req.user)
+//     throw new UnauthorizedError("Access Denied");
+
+//   const {
+//     id,
+//     firstName,
+//     lastName,
+//     email,
+//   } = req.user;
+
+//   const data = await service.googleAuth(id, email, firstName, lastName);
+//   return res.status(200).json(data);
+// })
+
+// router.get("/failure", (req, res) => {
+//   res.send("Failed to log in with Google.");
+// });
+
+// router.get("/rpc", async (req, res) => {
+//   const data = await service.rpc_test();
+//   return res.json(data);
+// });
 
 
 
