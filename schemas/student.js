@@ -5,7 +5,7 @@ class StudentSchema {
   profileSchema = joi.object().keys({
     firstName: joi.string().min(2).required(),
     lastName: joi.string().min(2).required(),
-    contactNumber: joi.string().regex(/^[0-9]+$/)
+    contactNumber: joi.string()
       .required(),
     gender: joi.string().required(),
     city: joi.string().required(),
