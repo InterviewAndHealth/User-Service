@@ -26,7 +26,7 @@ module.exports = async (app) => {
   app.use(error);
   app.use(upload.array());
 
-  console.log(UserService);
+  // console.log(UserService);
 
   const userservice=new UserService();
 

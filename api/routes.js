@@ -109,16 +109,16 @@ router.get("/StudentProfile",authMiddleware, async (req, res) => {
 router.post("/studentprofilewithresume",authMiddleware,upload.single('file'),validateMiddleware(studentSchema.profileSchema),async (req, res) => {
   const { firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity} = req.body;
 
-  console.log(req.body);
+  // console.log(req.body);
 
   const filePath = req.file.path;
   const fileName = req.file.filename;
 
-  console.log(filePath);
-  console.log(fileName);
+  // console.log(filePath);
+  // console.log(fileName);
 
   const resumeLink = await uploadFileToS3(filePath, fileName);
-  console.log(resumeLink);
+  // console.log(resumeLink);
 
   const userId=req.userId;
   const data = await service.createStudentProfilewithresume(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity,resumeLink, userId);
@@ -138,11 +138,11 @@ router.post('/uploadresume',authMiddleware, upload.single('file'), async (req, r
     const filePath = req.file.path;
     const fileName = req.file.filename;
 
-    console.log(filePath);
-    console.log(fileName);
+    // console.log(filePath);
+    // console.log(fileName);
 
     const fileUrl = await uploadFileToS3(filePath, fileName);
-    console.log(fileUrl);
+    // console.log(fileUrl);
 
     res.status(200).json({
         message: 'Resume uploaded successfully',

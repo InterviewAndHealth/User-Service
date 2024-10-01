@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => {
         // const { username} = req.body;
         const userid=req.userId;
-        console.log("hello");
+        // console.log("hello");
         const uniqueName = `${userid}.${file.originalname.split('.').pop()}`;
         cb(null, uniqueName);
     },

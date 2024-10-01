@@ -137,7 +137,7 @@ class Repository {
 
   async getUserbyid(userId) { 
 
-    console.log(userId);
+    // console.log(userId);
     const result = await DB.query({
       text: "SELECT * FROM users WHERE public_id = $1",
       values: [userId],
