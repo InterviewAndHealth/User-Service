@@ -135,12 +135,12 @@ class Service {
   }
 
 
-  async updateStudentProfile(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId){
+  async updateStudentProfile(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,resumeLink,userId){
 
     const student = await this.repository.getStudent(userId);
     if (!student) throw new BadRequestError("Student Profile does not exists");
 
-      const newStudent = await this.repository.updateStudent(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,userId);
+      const newStudent = await this.repository.updateStudent(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,resumeLink,userId);
 
     return{
       message: "Student Profile updated successfully",
@@ -159,6 +159,24 @@ class Service {
     };
 
   }
+
+
+  async createStudentProfilewithresume(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity,resumeLink, userId) {
+
+    const student = await this.repository.getStudent(userId);
+    if (student) throw new BadRequestError("Student Profile already exists");
+
+
+  const newStudent = await this.repository.createStudentProfileWithResume(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity,resumeLink, userId);
+
+  return {
+    message: "Student Profile created successfully",
+    newStudent
+  };
+  
+}
+
+
 
 
   
