@@ -15,9 +15,12 @@ class Service {
   // Login method will be used to authenticate the user
   async login(email, password) {
 
-      const user = await this.repository.getUser(email);
+    const user = await this.repository.getUser(email);
 
     if (!user) throw new NotFoundError("User not found");
+
+    if (user.authtype != 'normal')
+      throw new BadRequestError("User logged in through other social account")
 
     if (!bcrypt.compareSync(password, user.password))
       throw new BadRequestError("Invalid password");
@@ -30,19 +33,20 @@ class Service {
       message: "Login successful",
       authToken
     };
-    
+
   }
 
   // Register method will be used to create a new user
   async register(email, password) {
 
-      const user = await this.repository.getUser(email);
+    const user = await this.repository.getUser(email);
     if (user) throw new BadRequestError("User already exists");
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.repository.createUser(
       email,
       hashedPassword,
+      "normal"
     );
 
     const authToken = this.token.generateToken({
@@ -61,23 +65,23 @@ class Service {
       message: "User created successfully",
       authToken
     };
-      
-  
+
+
   }
 
 
-  async googleAuth(googleId, email, firstname, lastname) {
+  async googleAuth(googleId, email) {
     const user = await this.repository.getUser(email);
     if (!user) {
-      const hashedPassword = await bcrypt.hash(googleId + firstname + lastname, 10);
+      const hashedPassword = await bcrypt.hash(googleId, 10);
       const newUser = await this.repository.createUser(
         email,
         hashedPassword,
-        firstname + " " + lastname
+        "google",
       );
 
       const authToken = this.token.generateToken({
-        sub: newUser.id
+        sub: newUser.public_id
       }, '1d');
 
       return {
@@ -87,15 +91,19 @@ class Service {
     }
     else {
 
+      if (user.authtype == 'google') {
+        const authToken = this.token.generateToken({
+          sub: user.public_id
+        }, '1d');
 
-      const authToken = this.token.generateToken({
-        sub: user.id
-      }, '1d');
-
-      return {
-        message: "Login successful",
-        authToken
-      };
+        return {
+          message: "Login successful",
+          authToken
+        };
+      }
+      else {
+        throw new BadRequestError("Email registered without google login")
+      }
     }
   }
 
@@ -121,8 +129,13 @@ class Service {
   //createStudentProfile function is used create Student Profile  
   async createStudentProfile(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, userId) {
 
-      const student = await this.repository.getStudent(userId);
-      if (student) throw new BadRequestError("Student Profile already exists");
+    const student = await this.repository.getStudent(userId);
+    if (student) throw new BadRequestError("Student Profile already exists");
+
+    const user = await this.repository.getUserByNumber(contactNumber);
+
+    if (user)
+      throw new BadRequestError("Contact Number already exists");
 
 
     const newStudent = await this.repository.createStudent(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, userId);
@@ -131,26 +144,26 @@ class Service {
       message: "Student Profile created successfully",
       newStudent
     };
-    
+
   }
 
 
-  async updateStudentProfile(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,resumeLink,userId){
+  async updateStudentProfile(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, resumeLink, userId) {
 
     const student = await this.repository.getStudent(userId);
     if (!student) throw new BadRequestError("Student Profile does not exists");
 
-      const newStudent = await this.repository.updateStudent(firstName,lastName,contactNumber,gender,city,country,skills,preparingFor,workMode,preferredCity,resumeLink,userId);
+    const newStudent = await this.repository.updateStudent(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, resumeLink, userId);
 
-    return{
+    return {
       message: "Student Profile updated successfully",
       newStudent
     };
-    
+
   }
 
 
-  async getStudentProfile(userId){
+  async getStudentProfile(userId) {
     const student = await this.repository.getStudent(userId);
     if (!student) throw new NotFoundError("Student Profile not found");
     return {
@@ -161,25 +174,30 @@ class Service {
   }
 
 
-  async createStudentProfilewithresume(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity,resumeLink, userId) {
+  async createStudentProfilewithresume(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, resumeLink, userId) {
 
     const student = await this.repository.getStudent(userId);
     if (student) throw new BadRequestError("Student Profile already exists");
 
+    const user = await this.repository.getUserByNumber(contactNumber);
 
-  const newStudent = await this.repository.createStudentProfileWithResume(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity,resumeLink, userId);
-
-  return {
-    message: "Student Profile created successfully",
-    newStudent
-  };
-  
-}
+    if (user)
+      throw new BadRequestError("Contact Number already exists");
 
 
+    const newStudent = await this.repository.createStudentProfileWithResume(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, resumeLink, userId);
+
+    return {
+      message: "Student Profile created successfully",
+      newStudent
+    };
+
+  }
 
 
-  
+
+
+
 }
 
 module.exports = Service;
