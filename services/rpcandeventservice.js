@@ -1,4 +1,4 @@
-const RPCService = require('./broker/rpc');
+
 const { Repository } = require("../database");
 // A mock function to simulate user lookup
 
@@ -23,6 +23,22 @@ class UserService {
 
       // Return the response
       return { data:userExists };
+    }else if (request.type === 'GET_USER_PROFILE') {
+
+      const{ userId } = request.data;
+
+      const profile=await this.repository.getStudent(userId);
+
+      return { data:profile};
+    }
+  }
+
+
+  async handleEvent(event) {
+    if (event.type === 'ABCD') {
+     
+
+      
     }
   }
 }
