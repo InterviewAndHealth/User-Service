@@ -42,9 +42,12 @@ router.get("/allusers", authMiddleware, async (req, res) => {
 
 router.get('/google', async (req, res) => {
   const code = req.query.code;
-
+  console.log("code", code);
 
   const googleRes = await oauth2Client.getToken(code);
+
+  console.log("gres", googleRes);
+
 
   if (!googleRes)
     throw new BadRequestError("Unable to fetch token");
@@ -53,6 +56,8 @@ router.get('/google', async (req, res) => {
   const userRes = await axios.get(
     `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
   );
+
+  console.log("userRes", userRes.data);
 
 
   if (!userRes)
