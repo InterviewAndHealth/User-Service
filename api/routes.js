@@ -40,8 +40,8 @@ router.get("/allusers", authMiddleware, async (req, res) => {
   return res.json(data);
 });
 
-router.post('/google', async (req, res) => {
-  const code = req.body.code;
+router.get('/google', async (req, res) => {
+  const code = req.query.code;
 
 
   const googleRes = await oauth2Client.getToken(code);
