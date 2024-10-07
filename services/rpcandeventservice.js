@@ -26,7 +26,7 @@ class UserService {
     }else if (request.type === 'GET_USER_RESUME') {
 
       const{ userId } = request.data;
-      console.log(userId);
+      // console.log(userId);
 
       const profile=await this.repository.getStudent(userId);
 
@@ -36,7 +36,7 @@ class UserService {
 
       const filename=`${userId}.pdf`;
       const signedUrl=await getSignedUrlForRead(filename);
-      console.log(signedUrl);
+      // console.log(signedUrl);
       return { data:signedUrl};
 
 
