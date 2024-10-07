@@ -67,33 +67,6 @@ router.get('/google', async (req, res) => {
 
 });
 
-// router.get('/login/google/callback', passport.authenticate('google', {
-//   failureRedirect: '/failure',
-//   session: false
-// }), async (req, res) => {
-
-//   if (!req.user)
-//     throw new UnauthorizedError("Access Denied");
-
-//   const {
-//     id,
-//     firstName,
-//     lastName,
-//     email,
-//   } = req.user;
-
-//   const data = await service.googleAuth(id, email, firstName, lastName);
-//   return res.status(200).json(data);
-// })
-
-// router.get("/failure", (req, res) => {
-//   res.send("Failed to log in with Google.");
-// });
-
-// router.get("/rpc", async (req, res) => {
-//   const data = await service.rpc_test();
-//   return res.json(data);
-// });
 
 
 
@@ -237,5 +210,30 @@ router.delete('/deleteresume', authMiddleware, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+
+
+
+
+// const { EventService, RPCService } = require("../services/broker");
+
+// router.get("/rpctest",authMiddleware, async (req, res) => {
+//   // const {jobdescription, interviewtype, difficulty, jobfield, status } = req.body;
+
+  
+//   const userid=req.userId;
+//   const interviewId="xr56gw4nt0x5";
+//   console.log(userid);
+//   const response = await RPCService.request('INTERVIEWS_SCHEDULE_RPC', {
+//     type: 'GET_INTERVIEW_DETAILS',
+//     data:{
+//       interviewId
+//     },
+//   });
+//   console.log(response);
+  
+//   return res.json(response);
+// });
 
 module.exports = router;

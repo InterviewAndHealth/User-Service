@@ -1,8 +1,7 @@
-const RPCService = require('./broker/rpc');
+
 const { Repository } = require("../database");
 // A mock function to simulate user lookup
-
-
+const {getSignedUrlForRead}=require("../config/awsconfig")
 class UserService {
   constructor() {
     this.repository = new Repository();
@@ -23,7 +22,36 @@ class UserService {
 
       // Return the response
       return { data:userExists };
+
+    }else if (request.type === 'GET_USER_RESUME') {
+
+      const{ userId } = request.data;
+      // console.log(userId);
+
+      const profile=await this.repository.getStudent(userId);
+
+      if(!profile){
+        return {data:"Student Profile not found"};
+      }
+
+      const filename=`${userId}.pdf`;
+      const signedUrl=await getSignedUrlForRead(filename);
+      // console.log(signedUrl);
+      return { data:signedUrl};
+
+
+    }
+  }
+
+
+  async handleEvent(event) {
+    if (event.type === 'ABCD') {
+     
+
+      
     }
   }
 }
 module.exports = {UserService};
+
+
