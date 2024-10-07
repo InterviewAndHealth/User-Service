@@ -9,6 +9,7 @@ const { s3, upload, uploadFileToS3 } = require("../config/awsconfig")
 const { oauth2Client } = require('../config/googleconfig');
 const axios = require('axios');
 
+
 const router = express.Router();
 const service = new Service();
 const userSchema = new UserSchema();
@@ -40,11 +41,11 @@ router.get("/allusers", authMiddleware, async (req, res) => {
   return res.json(data);
 });
 
-router.post('/google', async (req, res) => {
-  const code = req.body.code;
-
+router.get('/google', async (req, res) => {
+  const code = req.query.code;
 
   const googleRes = await oauth2Client.getToken(code);
+
 
   if (!googleRes)
     throw new BadRequestError("Unable to fetch token");
