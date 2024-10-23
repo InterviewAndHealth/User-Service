@@ -19,6 +19,7 @@ router.get("/", (req, res) => {
   res.json({ message: "Welcome to the users API" });
 });
 
+
 router.post("/login", validateMiddleware(userSchema.loginSchema), async (req, res) => {
   const { email, password } = req.body;
 
@@ -89,7 +90,7 @@ router.put("/StudentProfile", authMiddleware, async (req, res) => {
 
   const userId = req.userId;
   const data = await service.updateStudentProfile(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, resumeLink, userId);
-  return res.status(204).json(data);
+  return res.status(200).json(data);
 
 });
 

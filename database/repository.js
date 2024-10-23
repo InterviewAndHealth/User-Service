@@ -103,11 +103,11 @@ class Repository {
       values.push(workMode);
     }
     if (preferredCity) {
-      updates.push(`preferredcity = $${updates.length + 1}`);
+      updates.push(`preferedcity = $${updates.length + 1}`);
       values.push(preferredCity);
     }
     if (resumeLink) {
-      updates.push(`preferredcity = $${updates.length + 1}`);
+      updates.push(`resumelink = $${updates.length + 1}`);
       values.push(resumeLink);
     }
 
@@ -126,12 +126,21 @@ class Repository {
     RETURNING *;
   `;
 
-    const result = await DB.query({
+    const result1 = await DB.query({
       text: query,
       values: values,
     });
 
-    return result.rows[0];
+    console.log(result1.rows[0]);
+
+    const result2 = await DB.query({
+      text: "SELECT * FROM students WHERE userid = $1",
+      values: [userId],
+    });
+
+  
+
+    return result2.rows[0];
   }
 
 
