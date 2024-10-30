@@ -40,6 +40,17 @@ class UserService {
       return { data:signedUrl};
 
 
+    }else if(request.type==='GET_USER_DETAILS'){
+
+      const{ userId } = request.data;
+
+      const profile=await this.repository.getStudent(userId);
+
+      if(!profile){
+        return {datafound:0,data:"Student Profile not found"};
+      }
+
+      return {datafound:1,data:profile};
     }
   }
 
