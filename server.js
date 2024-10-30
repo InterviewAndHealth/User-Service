@@ -4,38 +4,30 @@ const cors = require("cors");
 const error = require("./middlewares/error");
 const routes = require("./api/routes");
 const { DB } = require("./database");
-const passport = require('passport');
+const passport = require("passport");
 const { UserService } = require("./services/rpcandeventservice");
+const { SERVICE_QUEUE } = require("./config");
+var bodyParser = require("body-parser");
+const RPCService = require("./services/broker/rpc");
+const EventService = require("./services/broker/events");
 
-const multer=require('multer');
+const multer = require("multer");
 
-const upload=multer();
-
-var bodyParser = require('body-parser');
-
-const RPCService = require('./services/broker/rpc');
-const EventService = require('./services/broker/events');
+const upload = multer();
 
 module.exports = async (app) => {
   await DB.connect();
 
-  app.use(passport.initialize())
+  app.use(passport.initialize());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use(bodyParser.urlencoded({ extended: false }))
+  app.use(bodyParser.urlencoded({ extended: false }));
   app.use(cors());
   app.use(routes);
   app.use(error);
   app.use(upload.array());
 
-  // console.log(UserService);
-
-  const userservice=new UserService();
-
+  const userservice = new UserService();
   await RPCService.respond(userservice);
-
-  EventService.subscribe('USER_SERVICE', userservice);
-
-
-  
+  EventService.subscribe(SERVICE_QUEUE, userservice);
 };

@@ -40,25 +40,54 @@ class Repository {
     return result.rows;
   }
 
-
   // functions for insertiong in student table
-  async createStudent(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, userId) {
+  async createStudent(
+    firstName,
+    lastName,
+    contactNumber,
+    gender,
+    city,
+    country,
+    skills,
+    preparingFor,
+    workMode,
+    preferredCity,
+    userId
+  ) {
     const result = await DB.query({
       text: "INSERT INTO students (firstname, lastname, contactnumber, gender, city, country, skills, preparingfor, workmode, preferedcity, userid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
       values: [
-        firstName, lastName, contactNumber, gender, city, country,
-        skills, preparingFor, workMode, preferredCity, userId
+        firstName,
+        lastName,
+        contactNumber,
+        gender,
+        city,
+        country,
+        skills,
+        preparingFor,
+        workMode,
+        preferredCity,
+        userId,
       ],
     });
 
     return result.rows[0];
   }
 
-
-
-  async updateStudent(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, resumeLink, userId) {
-
-
+  async updateStudent(
+    firstName,
+    lastName,
+    contactNumber,
+    gender,
+    city,
+    country,
+    skills,
+    preparingFor,
+    workMode,
+    preferredCity,
+    resumeLink,
+    userId
+  ) {
     let updates = [];
     let values = [];
 
@@ -91,7 +120,7 @@ class Repository {
       values.push(country);
     }
     if (skills) {
-      updates.push(`skills = $${updates.length + 1}`);  // Assuming skills is stored as an array in PostgreSQL
+      updates.push(`skills = $${updates.length + 1}`); // Assuming skills is stored as an array in PostgreSQL
       values.push(skills);
     }
     if (preparingFor) {
@@ -121,7 +150,7 @@ class Repository {
 
     const query = `
     UPDATE students
-    SET ${updates.join(', ')}
+    SET ${updates.join(", ")}
     WHERE userid = $${values.length}
     RETURNING *;
   `;
@@ -138,11 +167,8 @@ class Repository {
       values: [userId],
     });
 
-  
-
     return result2.rows[0];
   }
-
 
   async getStudent(userId) {
     const result = await DB.query({
@@ -152,9 +178,7 @@ class Repository {
     return result.rows[0];
   }
 
-
   async getUserbyid(userId) {
-
     // console.log(userId);
     const result = await DB.query({
       text: "SELECT * FROM users WHERE public_id = $1",
@@ -163,21 +187,40 @@ class Repository {
     return result.rows[0];
   }
 
-
-
-
-  async createStudentProfileWithResume(firstName, lastName, contactNumber, gender, city, country, skills, preparingFor, workMode, preferredCity, resumeLink, userId) {
+  async createStudentProfileWithResume(
+    firstName,
+    lastName,
+    contactNumber,
+    gender,
+    city,
+    country,
+    skills,
+    preparingFor,
+    workMode,
+    preferredCity,
+    resumeLink,
+    userId
+  ) {
     const result = await DB.query({
       text: "INSERT INTO students (firstname, lastname, contactnumber, gender, city, country, skills, preparingfor, workmode, preferedcity,resumelink, userid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *",
       values: [
-        firstName, lastName, contactNumber, gender, city, country,
-        skills, preparingFor, workMode, preferredCity, resumeLink, userId
+        firstName,
+        lastName,
+        contactNumber,
+        gender,
+        city,
+        country,
+        skills,
+        preparingFor,
+        workMode,
+        preferredCity,
+        resumeLink,
+        userId,
       ],
     });
 
     return result.rows[0];
   }
-
 }
 
 module.exports = Repository;

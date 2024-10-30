@@ -298,25 +298,6 @@ router.delete("/deleteresume", authMiddleware, async (req, res) => {
   }
 });
 
-// const { EventService, RPCService } = require("../services/broker");
-
-// router.get("/rpctest",authMiddleware, async (req, res) => {
-//   // const {jobdescription, interviewtype, difficulty, jobfield, status } = req.body;
-
-//   const userid=req.userId;
-//   const interviewId="xr56gw4nt0x5";
-//   console.log(userid);
-//   const response = await RPCService.request('INTERVIEWS_SCHEDULE_RPC', {
-//     type: 'GET_INTERVIEW_DETAILS',
-//     data:{
-//       interviewId
-//     },
-//   });
-//   console.log(response);
-
-//   return res.json(response);
-// });
-
 router.get("/health", (req, res) => {
   res.status(200).json({ status: "UP" });
 });

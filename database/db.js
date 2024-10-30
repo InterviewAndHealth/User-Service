@@ -1,5 +1,5 @@
 const { Pool } = require("pg");
-const {DATABASE_URL,DATABASE_NAME } = require("../config");
+const { DATABASE_URL, DATABASE_NAME } = require("../config");
 const path = require("path");
 const fs = require("fs");
 
@@ -19,7 +19,6 @@ class DB {
     //       rejectUnauthorized: false,
     //     },
     //   });
-
 
     if (!this.#pool) {
       this.#pool = new Pool({
@@ -52,11 +51,11 @@ class DB {
     const pathToSQL = path.join(__dirname, "queries", "create.sql");
     const rawQuery = fs.readFileSync(pathToSQL).toString();
 
-    const queries = rawQuery.split(';');
+    const queries = rawQuery.split(";");
 
     const processedQueries = queries
-      .filter(query => query.trim() !== '')
-      .map(query => query.replace(/\n/g, "").replace(/\s+/g, " "));
+      .filter((query) => query.trim() !== "")
+      .map((query) => query.replace(/\n/g, "").replace(/\s+/g, " "));
 
     const query = rawQuery.replace(/\n/g, "").replace(/\s+/g, " ");
     return this.#pool.query(query);
@@ -69,17 +68,15 @@ class DB {
     return this.#pool.query(query);
   }
 
-
   static async createStudentTable() {
     const pathToSQL = path.join(__dirname, "queries", "createStudent.sql");
     const rawQuery = fs.readFileSync(pathToSQL).toString();
 
-
-    const queries = rawQuery.split(';');
+    const queries = rawQuery.split(";");
 
     const processedQueries = queries
-      .filter(query => query.trim() !== '')
-      .map(query => query.replace(/\n/g, "").replace(/\s+/g, " "));
+      .filter((query) => query.trim() !== "")
+      .map((query) => query.replace(/\n/g, "").replace(/\s+/g, " "));
 
     const query = rawQuery.replace(/\n/g, "").replace(/\s+/g, " ");
 

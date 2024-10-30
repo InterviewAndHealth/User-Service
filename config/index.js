@@ -1,23 +1,11 @@
 const dotEnv = require("dotenv");
 const { EVENT_TYPES, RPC_TYPES } = require("./types");
 
-// if (process.env.NODE_ENV !== "production") {
-//   const configFile = `./.env.${process.env.NODE_ENV}`;
-//   dotEnv.config({ path: configFile });
-// } else {
-//   dotEnv.config();
-// }
-
 dotEnv.config();
 
 module.exports = {
   PORT: process.env.PORT || 8000,
   APP_SECRET: process.env.APP_SECRET,
-  // PGUSER: process.env.PGUSER,
-  // PGPASSWORD: process.env.PGPASSWORD,
-  // PGHOST: process.env.PGHOST,
-  // PGPORT: process.env.PGPORT,
-  // PGDATABASE: process.env.PGDATABASE,
 
   DATABASE_URL: process.env.DATABASE_URL,
   DATABASE_NAME: process.env.DATABASE_NAME,
@@ -26,12 +14,12 @@ module.exports = {
   SERVICE_NAME: process.env.SERVICE_NAME,
   SERVICE_QUEUE: process.env.SERVICE_QUEUE,
   RPC_QUEUE: process.env.RPC_QUEUE,
-  
-  INTERVIEW_SCHEDULE_QUEUE:process.env.INTERVIEW_SCHEDULE_QUEUE,
-  INTERVIEW_SCHEDULE_RPC:process.env.INTERVIEW_SCHEDULE_RPC,
-  
-  PAYMENT_QUEUE:process.env.PAYMENT_QUEUE,
-  PAYMENT_RPC:process.env.PAYMENT_RPC,
+
+  INTERVIEW_QUEUE: process.env.INTERVIEW_QUEUE,
+  INTERVIEW_RPC: process.env.INTERVIEW_RPC,
+
+  PAYMENT_QUEUE: process.env.PAYMENT_QUEUE,
+  PAYMENT_RPC: process.env.PAYMENT_RPC,
   EVENT_TYPES,
   RPC_TYPES,
   JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,

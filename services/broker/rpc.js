@@ -34,7 +34,6 @@ class RPCService {
 
       return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
-         
           reject("Unable to get data");
         }, 10000);
 
@@ -69,7 +68,10 @@ class RPCService {
     try {
       const channel = await Broker.connect();
       await channel.assertQueue(RPC_QUEUE, {
-        durable: false,
+        durable: true,
+        arguments: {
+          "x-queue-type": "quorum",
+        },
       });
       channel.prefetch(1);
       channel.consume(
