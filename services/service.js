@@ -53,13 +53,13 @@ class Service {
       sub: newUser.public_id
     }, '1d');
 
-    EventService.publish(TEST_QUEUE, {
-      type: EVENT_TYPES.USER_CREATED,
-      data: {
-        userId: newUser.public_id,
-        email: newUser.email,
-      },
-    });
+    // EventService.publish(TEST_QUEUE, {
+    //   type: EVENT_TYPES.USER_CREATED,
+    //   data: {
+    //     userId: newUser.public_id,
+    //     email: newUser.email,
+    //   },
+    // });
 
     return {
       message: "User created successfully",
@@ -107,14 +107,14 @@ class Service {
     }
   }
 
-  async rpc_test() {
-    const data = await RPCService.request(TEST_RPC, {
-      type: TEST_RPC,
-      data: "Requesting data",
-    });
+  // async rpc_test() {
+  //   const data = await RPCService.request(TEST_RPC, {
+  //     type: TEST_RPC,
+  //     data: "Requesting data",
+  //   });
 
-    return data;
-  }
+  //   return data;
+  // }
 
   async getAllUsers() {
     const users = await this.repository.getAllUsers();
