@@ -166,9 +166,12 @@ class Service {
   async getStudentProfile(userId) {
     const student = await this.repository.getStudent(userId);
     if (!student) throw new NotFoundError("Student Profile not found");
+    const user = await this.repository.getUserbyid(userId);
+    if(!user) throw new NotFoundError("User not found");
     return {
       message: "Student Profile updated successfully",
-      student
+      student,
+      user
     };
 
   }

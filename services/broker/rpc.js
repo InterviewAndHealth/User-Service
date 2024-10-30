@@ -34,7 +34,7 @@ class RPCService {
 
       return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
-          channel.close();
+         
           reject("Unable to get data");
         }, 10000);
 
