@@ -17,11 +17,11 @@ class Repository {
   async createRecruiter(
     email,
     password,
-    companyName,
-    companyLocation,
-    contactNumber,
     firstName,
-    lastName
+    lastName,
+    contactNumber,
+    companyName,
+    companyLocation
   ) {
     const id = nanoid();
     const result = await DB.query({
@@ -34,16 +34,24 @@ class Repository {
       text: "INSERT INTO recruiter_profiles (user_id, first_name, last_name, contact_number, company_name, company_location) VALUES ($1, $2, $3, $4, $5, $6)",
       values: [
         id,
-        companyName,
-        companyLocation,
-        contactNumber,
         firstName,
         lastName,
+        contactNumber,
+        companyName,
+        companyLocation,
       ],
     });
 
     return result.rows[0];
   }
+
+  getRecruiter = async (userId) => {
+    const result = await DB.query({
+      text: "SELECT * FROM recruiter_profiles WHERE user_id = $1",
+      values: [userId],
+    });
+    return result.rows[0];
+  };
 
   // Get user by conctact number
   async getUserByNumber(contactNumber) {

@@ -19,11 +19,13 @@ class Service {
     if (!bcrypt.compareSync(password, user.password))
       throw new BadRequestError("Invalid password");
 
+    const recruiter = await this.repository.getRecruiter(user.public_id);
+
     const authToken = this.token.generateToken(
       {
         sub: user.public_id,
         role: user.role,
-        companyLocation: user.companyLocation,
+        companyLocation: recruiter.companyLocation,
       },
       "1d"
     );
@@ -36,9 +38,9 @@ class Service {
     password,
     firstName,
     lastName,
+    contactNumber,
     companyName,
-    companyLocation,
-    contactNumber
+    companyLocation
   ) {
     const user = await this.repository.getUser(email);
     if (user) throw new BadRequestError("User already exists");
@@ -47,18 +49,20 @@ class Service {
     const newUser = await this.repository.createRecruiter(
       email,
       hashedPassword,
-      companyName,
-      companyLocation,
-      contactNumber,
       firstName,
-      lastName
+      lastName,
+      contactNumber,
+      companyName,
+      companyLocation
     );
+
+    const recruiter = await this.repository.getRecruiter(newUser.public_id);
 
     const authToken = this.token.generateToken(
       {
         sub: newUser.public_id,
         role: "recruiter",
-        companyLocation: newUser.companyLocation,
+        companyLocation: recruiter.companyLocation,
       },
       "1d"
     );

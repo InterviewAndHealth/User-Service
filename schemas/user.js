@@ -22,9 +22,9 @@ class UserSchema {
     password: joi.string().min(5).required(),
     firstName: joi.string().required(),
     lastName: joi.string().required(),
+    contactNumber: joi.string().required(),
     companyName: joi.string().required(),
     companyLocation: joi.string().required(),
-    contactNumber: joi.string().required(),
   });
 }
 

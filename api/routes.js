@@ -50,9 +50,9 @@ router.post(
       password,
       firstName,
       lastName,
+      contactNumber,
       companyName,
-      companyLocation,
-      contactNumber
+      companyLocation
     );
     return res.status(201).json(data);
   }
