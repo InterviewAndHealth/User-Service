@@ -10,6 +10,60 @@ class Service {
     this.token = new Token();
   }
 
+  async recruiterLogin(email, password) {
+    const user = await this.repository.getUser(email);
+    if (!user) throw new NotFoundError("User not found");
+    if (user.role !== "recruiter")
+      throw new BadRequestError("Not a recruiter account");
+
+    if (!bcrypt.compareSync(password, user.password))
+      throw new BadRequestError("Invalid password");
+
+    const authToken = this.token.generateToken(
+      {
+        sub: user.public_id,
+        role: user.role,
+      },
+      "1d"
+    );
+
+    return { message: "Login successful", authToken };
+  }
+
+  async recruiterRegister(
+    email,
+    password,
+    firstName,
+    lastName,
+    companyName,
+    companyLocation,
+    contactNumber
+  ) {
+    const user = await this.repository.getUser(email);
+    if (user) throw new BadRequestError("User already exists");
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await this.repository.createRecruiter(
+      email,
+      hashedPassword,
+      companyName,
+      companyLocation,
+      contactNumber,
+      firstName,
+      lastName
+    );
+
+    const authToken = this.token.generateToken(
+      {
+        sub: newUser.public_id,
+        role: "recruiter",
+      },
+      "1d"
+    );
+
+    return { message: "Recruiter created successfully", authToken };
+  }
+
   // Login method will be used to authenticate the user
   async login(email, password) {
     const user = await this.repository.getUser(email);

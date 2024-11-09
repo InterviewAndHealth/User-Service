@@ -23,6 +23,42 @@ router.get("/", (req, res) => {
 });
 
 router.post(
+  "/recruiter/login",
+  validateMiddleware(userSchema.recruiterLoginSchema),
+  async (req, res) => {
+    const { email, password } = req.body;
+    const data = await service.recruiterLogin(email, password);
+    return res.status(200).json(data);
+  }
+);
+
+router.post(
+  "/recruiter/register",
+  validateMiddleware(userSchema.recruiterRegisterSchema),
+  async (req, res) => {
+    const {
+      email,
+      password,
+      firstName,
+      lastName,
+      contactNumber,
+      companyName,
+      companyLocation,
+    } = req.body;
+    const data = await service.recruiterRegister(
+      email,
+      password,
+      firstName,
+      lastName,
+      companyName,
+      companyLocation,
+      contactNumber
+    );
+    return res.status(201).json(data);
+  }
+);
+
+router.post(
   "/login",
   validateMiddleware(userSchema.loginSchema),
   async (req, res) => {
