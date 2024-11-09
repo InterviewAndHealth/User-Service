@@ -23,6 +23,7 @@ class Service {
       {
         sub: user.public_id,
         role: user.role,
+        companyLocation: user.companyLocation,
       },
       "1d"
     );
@@ -57,6 +58,7 @@ class Service {
       {
         sub: newUser.public_id,
         role: "recruiter",
+        companyLocation: newUser.companyLocation,
       },
       "1d"
     );
