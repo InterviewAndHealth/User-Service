@@ -20,6 +20,7 @@ class Service {
       throw new BadRequestError("Invalid password");
 
     const recruiter = await this.repository.getRecruiter(user.public_id);
+    // console.log(recruiter);
 
     const authToken = this.token.generateToken(
       {
@@ -57,6 +58,7 @@ class Service {
     );
 
     const recruiter = await this.repository.getRecruiter(newUser.public_id);
+    // console.log(recruiter);
 
     const authToken = this.token.generateToken(
       {
@@ -82,9 +84,12 @@ class Service {
     if (!bcrypt.compareSync(password, user.password))
       throw new BadRequestError("Invalid password");
 
+    const student = await this.repository.getStudent(user.public_id);
+
     const authToken = this.token.generateToken(
       {
         sub: user.public_id,
+        country: student.country,
       },
       "1d"
     );
@@ -106,6 +111,9 @@ class Service {
       hashedPassword,
       "normal"
     );
+
+    const student = await this.repository.getStudent(newUser.user_id);
+    console.log(student);
 
     const authToken = this.token.generateToken(
       {
