@@ -10,6 +10,68 @@ class Service {
     this.token = new Token();
   }
 
+  async recruiterLogin(email, password) {
+    const user = await this.repository.getUser(email);
+    if (!user) throw new NotFoundError("User not found");
+    if (user.role !== "recruiter")
+      throw new BadRequestError("Not a recruiter account");
+
+    if (!bcrypt.compareSync(password, user.password))
+      throw new BadRequestError("Invalid password");
+
+    const recruiter = await this.repository.getRecruiter(user.public_id);
+    // console.log(recruiter);
+
+    const authToken = this.token.generateToken(
+      {
+        sub: user.public_id,
+        role: user.role,
+        companyLocation: recruiter.companyLocation,
+      },
+      "1d"
+    );
+
+    return { message: "Login successful", authToken };
+  }
+
+  async recruiterRegister(
+    email,
+    password,
+    firstName,
+    lastName,
+    contactNumber,
+    companyName,
+    companyLocation
+  ) {
+    const user = await this.repository.getUser(email);
+    if (user) throw new BadRequestError("User already exists");
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await this.repository.createRecruiter(
+      email,
+      hashedPassword,
+      firstName,
+      lastName,
+      contactNumber,
+      companyName,
+      companyLocation
+    );
+
+    const recruiter = await this.repository.getRecruiter(newUser.public_id);
+    // console.log(recruiter);
+
+    const authToken = this.token.generateToken(
+      {
+        sub: newUser.public_id,
+        role: "recruiter",
+        companyLocation: recruiter.companyLocation,
+      },
+      "1d"
+    );
+
+    return { message: "Recruiter created successfully", authToken };
+  }
+
   // Login method will be used to authenticate the user
   async login(email, password) {
     const user = await this.repository.getUser(email);
@@ -22,9 +84,12 @@ class Service {
     if (!bcrypt.compareSync(password, user.password))
       throw new BadRequestError("Invalid password");
 
+    const student = await this.repository.getStudent(user.public_id);
+
     const authToken = this.token.generateToken(
       {
         sub: user.public_id,
+        country: student.country,
       },
       "1d"
     );
@@ -46,6 +111,9 @@ class Service {
       hashedPassword,
       "normal"
     );
+
+    const student = await this.repository.getStudent(newUser.user_id);
+    console.log(student);
 
     const authToken = this.token.generateToken(
       {

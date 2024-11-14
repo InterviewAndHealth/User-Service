@@ -39,6 +39,7 @@ class DB {
 
       this.createTable();
       this.createStudentTable();
+      this.createRecruiterProfiles();
     }
     return this.#pool.connect();
   }
@@ -70,6 +71,20 @@ class DB {
 
   static async createStudentTable() {
     const pathToSQL = path.join(__dirname, "queries", "createStudent.sql");
+    const rawQuery = fs.readFileSync(pathToSQL).toString();
+
+    const queries = rawQuery.split(";");
+
+    const processedQueries = queries
+      .filter((query) => query.trim() !== "")
+      .map((query) => query.replace(/\n/g, "").replace(/\s+/g, " "));
+
+    const query = rawQuery.replace(/\n/g, "").replace(/\s+/g, " ");
+
+    return this.#pool.query(query);
+  }
+  static async createRecruiterProfiles() {
+    const pathToSQL = path.join(__dirname, "queries", "createRecruiter.sql");
     const rawQuery = fs.readFileSync(pathToSQL).toString();
 
     const queries = rawQuery.split(";");

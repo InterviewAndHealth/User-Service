@@ -14,6 +14,45 @@ class Repository {
     return result.rows[0];
   }
 
+  async createRecruiter(
+    email,
+    password,
+    firstName,
+    lastName,
+    contactNumber,
+    companyName,
+    companyLocation
+  ) {
+    const id = nanoid();
+    const result = await DB.query({
+      text: "INSERT INTO users (public_id, email, password, authtype, role) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      values: [id, email, password, "normal", "recruiter"],
+    });
+
+    // Add recruiter profile
+    await DB.query({
+      text: "INSERT INTO recruiter_profiles (user_id, first_name, last_name, contact_number, company_name, company_location) VALUES ($1, $2, $3, $4, $5, $6)",
+      values: [
+        id,
+        firstName,
+        lastName,
+        contactNumber,
+        companyName,
+        companyLocation,
+      ],
+    });
+
+    return result.rows[0];
+  }
+
+  getRecruiter = async (userId) => {
+    const result = await DB.query({
+      text: "SELECT * FROM recruiter_profiles WHERE user_id = $1",
+      values: [userId],
+    });
+    return result.rows[0];
+  };
+
   // Get user by conctact number
   async getUserByNumber(contactNumber) {
     const result = await DB.query({
@@ -28,8 +67,8 @@ class Repository {
     const id = nanoid();
 
     const result = await DB.query({
-      text: "INSERT INTO users (public_id, email, password,authtype) VALUES ($1, $2, $3, $4) RETURNING *",
-      values: [id, email, password, authtype],
+      text: "INSERT INTO users (public_id, email, password,authtype, role) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      values: [id, email, password, authtype, "student"],
     });
 
     return result.rows[0];
