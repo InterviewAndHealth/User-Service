@@ -6,7 +6,7 @@ const routes = require("./api/routes");
 const { DB } = require("./database");
 const passport = require("passport");
 const { UserService } = require("./services/rpcandeventservice");
-const { SERVICE_NAME } = require("./config");
+const { SERVICE_QUEUE } = require("./config");
 var bodyParser = require("body-parser");
 const RPCService = require("./services/broker/rpc");
 const EventService = require("./services/broker/events");
@@ -29,5 +29,5 @@ module.exports = async (app) => {
 
   const userservice = new UserService();
   await RPCService.respond(userservice);
-  EventService.subscribe(SERVICE_NAME, userservice);
+  await EventService.subscribe(SERVICE_QUEUE, userservice);
 };

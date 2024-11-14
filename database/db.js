@@ -37,9 +37,9 @@ class DB {
         this.#isConnected = true;
       });
 
-      this.createTable();
-      this.createStudentTable();
-      this.createRecruiterProfiles();
+      await this.createTable();
+      await this.createStudentTable();
+      await this.createRecruiterProfiles();
     }
     return this.#pool.connect();
   }
