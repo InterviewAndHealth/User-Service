@@ -28,7 +28,7 @@ class Service {
     const authToken = this.token.generateToken(
       {
         sub: user.public_id,
-        role: user.role,
+        role: user.userrole,
         companyLocation: recruiter.companyLocation,
       },
       "1d"
@@ -93,6 +93,7 @@ class Service {
       {
         sub: user.public_id,
         country: student.country,
+        role: user.userrole,
       },
       "1d"
     );
@@ -115,12 +116,14 @@ class Service {
       "normal"
     );
 
-    const student = await this.repository.getStudent(newUser.user_id);
-    console.log(student);
+    // const student = await this.repository.getStudent(newUser.user_id);
+    // console.log(student);
 
     const authToken = this.token.generateToken(
       {
         sub: newUser.public_id,
+        // country: student.country,
+        role: newUser.userrole,
       },
       "1d"
     );
@@ -152,6 +155,8 @@ class Service {
       const authToken = this.token.generateToken(
         {
           sub: newUser.public_id,
+          // country: student.country,
+          role: newUser.userrole,
         },
         "1d"
       );
@@ -162,9 +167,14 @@ class Service {
       };
     } else {
       if (user.authtype == "google") {
+
+        const student = await this.repository.getStudent(user.user_id);
+
         const authToken = this.token.generateToken(
           {
             sub: user.public_id,
+            country: student.country,
+            role: user.userrole,
           },
           "1d"
         );

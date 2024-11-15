@@ -25,7 +25,7 @@ class Repository {
   ) {
     const id = nanoid();
     const result = await DB.query({
-      text: "INSERT INTO users (public_id, email, password, authtype, role) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      text: "INSERT INTO users (public_id, email, password, authtype, userrole) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       values: [id, email, password, "normal", "recruiter"],
     });
 
@@ -67,7 +67,7 @@ class Repository {
     const id = nanoid();
 
     const result = await DB.query({
-      text: "INSERT INTO users (public_id, email, password,authtype, role) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      text: "INSERT INTO users (public_id, email, password,authtype, userrole) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       values: [id, email, password, authtype, "student"],
     });
 
