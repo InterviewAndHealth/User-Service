@@ -232,6 +232,13 @@ router.post(
 
 //resume routes
 
+//Get resume
+router.get("/getresume", authMiddleware, async (req, res) => {
+  const userId = req.userId;
+  const data = await service.getResume(userId);
+  return res.status(200).json(data);
+});
+
 // Upload resume
 router.post(
   "/uploadresume",

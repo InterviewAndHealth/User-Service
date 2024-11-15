@@ -1,7 +1,10 @@
 const bcrypt = require("bcrypt");
 const { Repository } = require("../database");
 const { NotFoundError, BadRequestError } = require("../utils/errors");
-const Token = require("../utils/token");
+const { EventService, RPCService } = require("./broker");
+const { EVENT_TYPES, TEST_QUEUE, TEST_RPC } = require("../config");
+const Token = require('../utils/token')
+const {getSignedUrlForRead}=require('../config/awsconfig')
 
 // Service will contain all the business logic
 class Service {
@@ -326,6 +329,18 @@ class Service {
       message: "Student Profile created successfully",
       newStudent,
     };
+
+  }
+
+
+
+  async getResume(userId){
+
+    const filename=`${userId}.pdf`;
+      const signedUrl=await getSignedUrlForRead(filename);
+      // console.log(signedUrl);
+      return { data:signedUrl};
+    
   }
 }
 
