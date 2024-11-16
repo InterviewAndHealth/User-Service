@@ -92,7 +92,7 @@ class Service {
     const authToken = this.token.generateToken(
       {
         sub: user.public_id,
-        country: student.country,
+        // country: student.country,
         role: user.userrole,
       },
       "1d"
@@ -173,7 +173,7 @@ class Service {
         const authToken = this.token.generateToken(
           {
             sub: user.public_id,
-            country: student.country,
+            // country: student.country,
             role: user.userrole,
           },
           "1d"
