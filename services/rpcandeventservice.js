@@ -7,8 +7,10 @@ class UserService {
   }
 
   async respondRPC(request) {
+    console.log("Received request", request);
+
     if (request.type === "CHECK_USER_EXISTENCE") {
-      console.log(request);
+      // console.log(request);
       const { userid } = request.data;
       // Logic to check if user exists (e.g., query the database)
       // console.log(userid);
@@ -49,8 +51,7 @@ class UserService {
   }
 
   async handleEvent(event) {
-    if (event.type === "ABCD") {
-    }
+    console.log("Received event", event);
   }
 }
 module.exports = { UserService };
