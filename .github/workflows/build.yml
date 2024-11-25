@@ -13,9 +13,10 @@ env:
   GITHUB_USERNAME: interviewandhealth
   IMAGE_NAME: user-service
   IMAGE_TAG: v${{ github.run_number }}
+  CLUSTER_USERNAME: InterviewAndHealth
   CLUSTER_REPOSITORY: Cluster
   BRANCH: main
-  USERNAME: ${{ github.actor }}
+  USERNAME: GopalSaraf
   ACCESS_TOKEN: ${{ secrets.PERSONEL_TOKEN }}
   FILE_PATH: services/user-service/overlays/development/kustomization.yaml
   KEY: newTag
@@ -55,7 +56,7 @@ jobs:
       - name: Checkout Repository
         shell: bash
         run: |
-          REPOSITORY=https://${{ env.USERNAME }}:${{ env.ACCESS_TOKEN }}@github.com/${{ env.USERNAME }}/${{ env.CLUSTER_REPOSITORY }}.git
+          REPOSITORY=https://${{ env.USERNAME }}:${{ env.ACCESS_TOKEN }}@github.com/${{ env.CLUSTER_USERNAME }}/${{ env.CLUSTER_REPOSITORY }}.git
           git clone $REPOSITORY --depth 1 --branch ${{ env.BRANCH }} --single-branch .
 
       - name: Update Kustomization File
