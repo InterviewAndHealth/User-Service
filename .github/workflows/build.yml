@@ -26,7 +26,6 @@ jobs:
   build:
     name: Build Image and Push to GitHub Container Registry
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
