@@ -16,7 +16,7 @@ class Service {
   async recruiterLogin(email, password) {
     const user = await this.repository.getUser(email);
     if (!user) throw new NotFoundError("User not found");
-    if (user.role !== "recruiter")
+    if (user.userrole !== "recruiter")
       throw new BadRequestError("Not a recruiter account");
 
     if (!bcrypt.compareSync(password, user.password))
