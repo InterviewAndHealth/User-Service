@@ -47,6 +47,18 @@ class UserService {
       }
 
       return { datafound: 1, data: profile };
+    }else if (request.type === "GET_APPLICANT_DETAILS") {
+      const { userId } = request.data;
+
+      const user = await this.repository.getUserbyid(userid);
+
+      const profile = await this.repository.getStudent(userId);
+
+      if (!profile || !user) {
+        return null;
+      }
+
+      return { user, profile };
     }
   }
 
