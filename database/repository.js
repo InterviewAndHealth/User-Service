@@ -189,7 +189,7 @@ class Repository {
 
     const query = `
     UPDATE students
-    SET ${updates.join(", ")}
+    SET ${updates.join(", ")}, updated_at = CURRENT_TIMESTAMP
     WHERE userid = $${values.length}
     RETURNING *;
   `;
