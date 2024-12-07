@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const { Repository } = require("../database");
 const { NotFoundError, BadRequestError } = require("../utils/errors");
 const { EventService, RPCService } = require("./broker");
-const { EVENT_TYPES, TEST_QUEUE, TEST_RPC } = require("../config");
+const { EVENT_TYPES, TEST_QUEUE, TEST_RPC,PAYMENT_QUEUE } = require("../config");
 const Token = require('../utils/token')
 const {getSignedUrlForRead}=require('../config/awsconfig')
 
@@ -128,13 +128,12 @@ class Service {
       "1d"
     );
 
-    // EventService.publish(TEST_QUEUE, {
-    //   type: EVENT_TYPES.USER_CREATED,
-    //   data: {
-    //     userId: newUser.public_id,
-    //     email: newUser.email,
-    //   },
-    // });
+    EventService.publish(PAYMENT_QUEUE, {
+      type: EVENT_TYPES.USER_CREATED,
+      data: {
+        userId: newUser.public_id,
+      },
+    });
 
     return {
       message: "User created successfully",
@@ -160,6 +159,13 @@ class Service {
         },
         "1d"
       );
+
+       EventService.publish(PAYMENT_QUEUE, {
+        type: EVENT_TYPES.USER_CREATED,
+        data: {
+          userId: newUser.public_id,
+        },
+      });
 
       return {
         message: "User created successfully",
