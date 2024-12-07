@@ -9,7 +9,7 @@ class UserSchema {
   registerSchema = joi.object().keys({
     email: joi.string().email().required(),
     password: joi.string().min(5).required(),
-    referral_code: joi.string().required(),
+    referral_code: joi.string().optional(),
     // name: joi.string().min(2).required()
   });
 
