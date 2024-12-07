@@ -105,7 +105,7 @@ class Service {
   }
 
   // Register method will be used to create a new user
-  async register(email, password) {
+  async register(email, password,referral_code) {
     const user = await this.repository.getUser(email);
     if (user) throw new BadRequestError("User already exists");
 
@@ -132,6 +132,7 @@ class Service {
       type: EVENT_TYPES.USER_CREATED,
       data: {
         userId: newUser.public_id,
+        referral_code: referral_code
       },
     });
 

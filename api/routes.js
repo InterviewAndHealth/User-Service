@@ -73,9 +73,9 @@ router.post(
   "/register",
   validateMiddleware(userSchema.registerSchema),
   async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password,referral_code } = req.body;
 
-    const data = await service.register(email, password);
+    const data = await service.register(email, password,referral_code);
     return res.status(201).json(data);
   }
 );
