@@ -33,26 +33,38 @@ class RPCService {
       );
 
       return new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          reject("Unable to get data");
+        const timeout = setTimeout(async () => {
+          try {
+            await channel.deleteQueue(queue.queue);
+            reject("Request timed out");
+          } catch (err) {
+            console.error(`Failed to delete queue: ${err.message}`);
+            reject("Request timed out with cleanup error");
+          }
         }, 10000);
 
-        channel.consume(
+        const consumerTagPromise = channel.consume(
           queue.queue,
-          (data) => {
+          async (data) => {
             if (data.properties.correlationId === id) {
-              resolve(JSON.parse(data.content.toString()));
               clearTimeout(timeout);
-            } else {
-              reject("Data not found");
+              resolve(JSON.parse(data.content.toString()));
+              await channel.cancel(data.fields.consumerTag);
+              await channel.deleteQueue(queue.queue);
             }
           },
           { noAck: true }
         );
+
+        consumerTagPromise.catch((err) => {
+          clearTimeout(timeout);
+          console.error(`Failed to consume queue: ${err.message}`);
+          reject("Consumer setup failed");
+        });
       });
     } catch (err) {
-      console.log("Failed to request data");
-      return { error: err };
+      console.error("Failed to request data:", err);
+      throw err;
     }
   }
 
