@@ -5,12 +5,55 @@ const { EventService, RPCService } = require("./broker");
 const { EVENT_TYPES, TEST_QUEUE, TEST_RPC,PAYMENT_QUEUE } = require("../config");
 const Token = require('../utils/token')
 const {getSignedUrlForRead}=require('../config/awsconfig')
+const sendEmail = require("../utils/mail")
 
 // Service will contain all the business logic
 class Service {
   constructor() {
     this.repository = new Repository();
     this.token = new Token();
+  }
+
+  async sendWelcomeEmail(email, role) {
+    const { STUDENT_COUPON_CODE, RECRUITER_COUPON_CODE } = process.env
+
+    const options = {
+      to: email,
+      subject:
+        "Welcome to IamreadyAI - Your Partner in Job Preparation and Search",
+      html: `
+        <html>
+          <body style="font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+              <h2 style="color: #4CAF50;">Welcome to IamreadyAI!</h2>
+              <p style="font-size: 16px;">
+                Thank you for registering with IamreadyAI!
+              </p>
+              
+              <p style="font-size: 16px; line-height: 1.5;">
+                You can now start practicing real-time interviews and check your rankings to boost your job preparation efforts.
+              </p>
+              
+              <div style="background-color: #f9f9f9; padding: 10px; margin-top: 20px; border-left: 4px solid #4CAF50; font-size: 16px;">
+                <strong>Exclusive Offer for You!</strong><br>
+                Please use coupon code <strong><span style="color: #4CAF50;">${
+                  role === "student"
+                    ? STUDENT_COUPON_CODE
+                    : RECRUITER_COUPON_CODE
+                }</span></strong> for your first interview to get 50% discount.
+              </div>
+              
+              <p style="font-size: 16px; line-height: 1.5;">
+                Lets succeed together.<br>
+                IamreadyAI Team
+              </p>
+            </div>
+          </body>
+        </html>
+      `,
+    }
+
+    return await sendEmail(options)
   }
 
   async recruiterLogin(email, password) {
@@ -71,6 +114,8 @@ class Service {
       },
       "1d"
     );
+
+    await this.sendWelcomeEmail(email, "recruiter")
 
     return { message: "Recruiter created successfully", authToken };
   }
@@ -135,6 +180,8 @@ class Service {
         referral_code: referral_code
       },
     });
+
+    await this.sendWelcomeEmail(email, "student")
 
     return {
       message: "User created successfully",
