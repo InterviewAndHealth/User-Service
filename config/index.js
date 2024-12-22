@@ -1,7 +1,7 @@
-const dotEnv = require("dotenv");
-const { EVENT_TYPES, RPC_TYPES } = require("./types");
+const dotEnv = require("dotenv")
+const { EVENT_TYPES, RPC_TYPES } = require("./types")
 
-dotEnv.config();
+dotEnv.config()
 
 module.exports = {
   PORT: process.env.PORT || 8000,
@@ -51,4 +51,10 @@ module.exports = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 
   SIGNED_URL_EXPIRATION: process.env.SIGNED_URL_EXPIRATION,
-};
+  SMTP_HOST: process.env.SMTP_HOST,
+  SMTP_PORT: process.env.SMTP_PORT,
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+  STUDENT_COUPON_CODE: process.env.STUDENT_COUPON_CODE,
+  RECRUITER_COUPON_CODE: process.env.RECRUITER_COUPON_CODE,
+}
