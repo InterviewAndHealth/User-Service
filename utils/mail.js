@@ -1,9 +1,8 @@
 const nodemailer = require("nodemailer")
+const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD } = require("../config")
 
 const sendEmail = async (options) => {
   try {
-    const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD } = process.env
-
     const transporter = nodemailer.createTransport({
       host: SMTP_HOST,
       port: SMTP_PORT,
@@ -23,8 +22,10 @@ const sendEmail = async (options) => {
     }
 
     await transporter.sendMail(mail)
+    console.log("Email sent")
     return true
   } catch (error) {
+    console.log("Error sending email", error)
     return false
   }
 }
