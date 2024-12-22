@@ -6,6 +6,7 @@ const { EVENT_TYPES, TEST_QUEUE, TEST_RPC,PAYMENT_QUEUE } = require("../config")
 const Token = require('../utils/token')
 const {getSignedUrlForRead}=require('../config/awsconfig')
 const sendEmail = require("../utils/mail")
+const {STUDENT_COUPON_CODE, RECRUITER_COUPON_CODE} = require("../config")
 
 // Service will contain all the business logic
 class Service {
@@ -15,8 +16,6 @@ class Service {
   }
 
   async sendWelcomeEmail(email, role) {
-    const { STUDENT_COUPON_CODE, RECRUITER_COUPON_CODE } = process.env
-
     const options = {
       to: email,
       subject:
@@ -214,6 +213,8 @@ class Service {
           userId: newUser.public_id,
         },
       });
+
+      await this.sendWelcomeEmail(email, "student")
 
       return {
         message: "User created successfully",
