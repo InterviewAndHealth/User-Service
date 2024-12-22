@@ -71,7 +71,7 @@ router.post(
 
 router.post(
   "/register",
-  validateMiddleware(userSchema.registerSchema),
+  // validateMiddleware(userSchema.registerSchema),
   async (req, res) => {
     const { email, password,referral_code } = req.body;
 
