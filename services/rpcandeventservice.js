@@ -50,7 +50,7 @@ class UserService {
     }else if (request.type === "GET_APPLICANT_DETAILS") {
       const { userId } = request.data;
 
-      const user = await this.repository.getUserbyid(userid);
+      const user = await this.repository.getUserbyid(userId);
 
       const profile = await this.repository.getStudent(userId);
 
