@@ -239,7 +239,7 @@ router.get("/getresume", authMiddleware, async (req, res) => {
   return res.status(200).json(data);
 });
 
-router.get("/Recruitergetresume", authMiddleware, async (req, res) => {
+router.post("/Recruitergetresume", authMiddleware, async (req, res) => {
   const {userId} = req.body;
   const data = await service.getResume(userId);
   return res.status(200).json(data);
