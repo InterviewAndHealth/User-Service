@@ -176,7 +176,8 @@ class Service {
       type: EVENT_TYPES.USER_CREATED,
       data: {
         userId: newUser.public_id,
-        referral_code: referral_code
+        referral_code: referral_code,
+        role: newUser.userrole
       },
     });
 
