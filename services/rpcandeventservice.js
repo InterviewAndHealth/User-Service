@@ -58,8 +58,34 @@ class UserService {
         return null;
       }
 
-      return { user, profile };
+      const filename = `${userId}.pdf`;
+      const signedUrl = await getSignedUrlForRead(filename);
+
+      return { user, profile,signedUrl };
     }
+    // else if(request.type === "GET_APPLICANT_RESUMES") {
+    //   const{applications}=request.data;
+
+    //   const results = await Promise.all(
+    //     applications.map(async (application) => {
+    //         const { applicant_user_id, resume_link } = application;
+
+    //         // Generate signed URL only if resume_link exists
+    //         const resumeSignedUrl = resume_link? await getSignedUrlForRead(`${applicant_user_id}.pdf`): null;
+
+    //         // Return the application data with the additional field
+    //         return {
+    //             ...application,
+    //             resumeSignedUrl,
+    //         };
+    //     })
+    // );
+
+    // return results;
+
+    // }
+
+    
   }
 
   async handleEvent(event) {
