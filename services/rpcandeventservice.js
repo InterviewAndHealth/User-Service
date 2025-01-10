@@ -62,6 +62,22 @@ class UserService {
       const signedUrl = await getSignedUrlForRead(filename);
 
       return { user, profile,signedUrl };
+      
+    }else if( request.type === "GET_RECRUITER_DETAILS"){
+
+      const { userId } = request.data;
+
+      const user = await this.repository.getUserbyid(userId);
+
+      if(user.userrole !== "recruiter"){
+        return null;
+      }
+
+      const profile = await this.repository.getRecruiter(userId);
+
+      return { user, profile };
+
+
     }
     // else if(request.type === "GET_APPLICANT_RESUMES") {
     //   const{applications}=request.data;
