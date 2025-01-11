@@ -12,6 +12,7 @@ const RPCService = require("./services/broker/rpc");
 const EventService = require("./services/broker/events");
 
 const multer = require("multer");
+const Broker = require("./services/broker/broker");
 
 const upload = multer();
 
@@ -28,6 +29,7 @@ module.exports = async (app) => {
   app.use(upload.array());
 
   const userservice = new UserService();
-  await RPCService.respond(userservice);
+  await Broker.connect();
   await EventService.subscribe(SERVICE_QUEUE, userservice);
+  await RPCService.respond(userservice);
 };
