@@ -47,7 +47,7 @@ class UserService {
       }
 
       return { datafound: 1, data: profile };
-    }else if (request.type === "GET_APPLICANT_DETAILS") {
+    } else if (request.type === "GET_APPLICANT_DETAILS") {
       const { userId } = request.data;
 
       const user = await this.repository.getUserbyid(userId);
@@ -61,23 +61,19 @@ class UserService {
       const filename = `${userId}.pdf`;
       const signedUrl = await getSignedUrlForRead(filename);
 
-      return { user, profile,signedUrl };
-      
-    }else if( request.type === "GET_RECRUITER_DETAILS"){
-
+      return { user, profile, signedUrl };
+    } else if (request.type === "GET_RECRUITER_DETAILS") {
       const { userId } = request.data;
 
       const user = await this.repository.getUserbyid(userId);
 
-      if(user.userrole !== "recruiter"){
+      if (user.userrole !== "recruiter") {
         return null;
       }
 
       const profile = await this.repository.getRecruiter(userId);
 
       return { user, profile };
-
-
     }
     // else if(request.type === "GET_APPLICANT_RESUMES") {
     //   const{applications}=request.data;
@@ -101,11 +97,12 @@ class UserService {
 
     // }
 
-    
+    return { data: "Invalid request" };
   }
 
   async handleEvent(event) {
     console.log("Received event", event);
   }
 }
+
 module.exports = { UserService };
