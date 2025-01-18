@@ -86,6 +86,22 @@ class Service {
     return await sendEmail(options)
   }
 
+  async getTempAuth(user_id){
+
+    const authToken = this.token.generateToken(
+      {
+        sub: user_id,
+        role: "temp",
+      },
+      "1d"
+    )
+
+    return{
+      authToken
+    }
+
+  }
+
   async recruiterLogin(email, password) {
     const user = await this.repository.getUser(email)
     if (!user) throw new NotFoundError("User not found")

@@ -22,6 +22,17 @@ router.get("/", (req, res) => {
   res.json({ message: "Welcome to the User Service" });
 });
 
+router.post("/gettempauth",async(req,res)=>{
+
+  const {user_id}=req.body; 
+
+  const data = await service.getTempAuth(user_id);
+
+  return res.status(200).json(data);
+})
+
+
+
 router.post(
   "/recruiter/login",
   validateMiddleware(userSchema.recruiterLoginSchema),
