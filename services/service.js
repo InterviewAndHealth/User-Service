@@ -156,7 +156,7 @@ class Service {
       {
         sub: newUser.public_id,
         role: "recruiter",
-        companyLocation: recruiter.companyLocation,
+        companyLocation: recruiter.company_location,
       },
       "1d"
     )
