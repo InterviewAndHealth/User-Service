@@ -74,7 +74,17 @@ class UserService {
       const profile = await this.repository.getRecruiter(userId);
 
       return { user, profile };
+    }else if(request.type === "TALENTPOOL_GET_ALL_STUDENT_USERS") {
+      
+      const data = await this.repository.getAllStudents();
+
+      return data ;
     }
+
+
+
+
+
     // else if(request.type === "GET_APPLICANT_RESUMES") {
     //   const{applications}=request.data;
 

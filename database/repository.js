@@ -260,6 +260,78 @@ class Repository {
 
     return result.rows[0];
   }
+
+
+
+
+
+//   async getAllStudents() {
+//     const result = await DB.query({
+//         text: `
+//             SELECT 
+//                 u.id, 
+//                 u.public_id AS resume_id, 
+//                 u.email AS candidate_email, 
+//                 u.authtype, 
+//                 u.userrole, 
+//                 u.created_at AS user_created_at, 
+//                 u.updated_at AS user_updated_at, 
+//                 s.studentid, 
+//                 s.firstname, 
+//                 s.lastname, 
+//                 s.contactnumber AS contact_number, 
+//                 s.gender, 
+//                 s.city, 
+//                 s.country, 
+//                 s.skills, 
+//                 s.preparingfor, 
+//                 s.workmode, 
+//                 s.preferedcity, 
+//                 s.resumelink, 
+//                 s.created_at AS student_created_at, 
+//                 s.updated_at AS student_updated_at
+//             FROM users u
+//             JOIN students s ON u.public_id = s.userid
+//             WHERE u.userrole = 'student';
+//         `
+//     });
+//     return result.rows;
+// }
+
+async getAllStudents() {
+  const result = await DB.query({
+    text: `
+        SELECT 
+            u.id, 
+            u.public_id AS resume_id, 
+            u.email AS candidate_email, 
+            u.authtype, 
+            u.userrole, 
+            u.created_at AS user_created_at, 
+            u.updated_at AS user_updated_at, 
+            s.studentid, 
+            s.firstname || ' ' || s.lastname AS candidate_name, 
+            s.contactnumber AS contact_number, 
+            s.gender, 
+            s.city, 
+            s.country, 
+            array_to_string(s.skills, ', ') AS expertise, 
+            s.preparingfor, 
+            s.workmode, 
+            s.preferedcity AS location_preference, 
+            s.resumelink, 
+            s.created_at AS student_created_at, 
+            s.updated_at AS student_updated_at
+        FROM users u
+        JOIN students s ON u.public_id = s.userid
+        WHERE u.userrole = 'student';
+    `
+  });
+  return result.rows;
+}
+
+
+
 }
 
 module.exports = Repository;
