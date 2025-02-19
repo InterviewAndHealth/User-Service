@@ -324,7 +324,8 @@ async getAllStudents() {
             s.updated_at AS student_updated_at
         FROM users u
         JOIN students s ON u.public_id = s.userid
-        WHERE u.userrole = 'student';
+        WHERE u.userrole = 'student'
+        LIMIT 2;
     `
   });
   return result.rows;
