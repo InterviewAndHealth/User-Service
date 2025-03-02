@@ -15,7 +15,7 @@ module.exports = {
     process.env.DATABASE_URL ||
     `postgresql://${process.env.POSTGRES_USERNAME}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}`,
   DATABASE_NAME: process.env.DATABASE_NAME || process.env.USER_SERVICE_DB,
-
+  MY_APP_FRONTEND_URL:process.env.MY_APP_FRONTEND_URL,
   RABBITMQ_USERNAME: process.env.RABBITMQ_USERNAME,
   RABBITMQ_PASSWORD: process.env.RABBITMQ_PASSWORD,
   RABBITMQ_HOST: process.env.RABBITMQ_HOST,

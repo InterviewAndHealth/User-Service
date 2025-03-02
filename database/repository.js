@@ -113,6 +113,25 @@ class Repository {
     return result.rows[0];
   }
 
+
+  async createAdminUser(
+    email,
+    hashedPassword,
+    authtype,
+    userrole
+  ){
+
+    const id = nanoid();
+
+    const result = await DB.query({
+      text: "INSERT INTO users (public_id,email, password, authtype, userrole) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      values: [id,email, hashedPassword, authtype, userrole],
+    });
+
+    return result.rows[0];
+
+  }
+
   async updateStudent(
     firstName,
     lastName,
@@ -224,6 +243,17 @@ class Repository {
       values: [userId],
     });
     return result.rows[0];
+  }
+
+  async updatePassword(userId,hashedPassword){
+
+    const result = await DB.query({
+      text: "UPDATE users SET password = $1 WHERE public_id = $2",
+      values: [hashedPassword, userId],
+    });
+
+    return result.rows[0];
+
   }
 
   async createStudentProfileWithResume(

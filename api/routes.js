@@ -12,6 +12,7 @@ const { UserSchema, StudentSchema } = require("../schemas");
 const { s3, upload, uploadFileToS3 } = require("../config/awsconfig");
 const { oauth2Client } = require("../config/googleconfig");
 const axios = require("axios");
+const auth = require("../middlewares/auth");
 
 const router = express.Router();
 const service = new Service();
@@ -90,6 +91,40 @@ router.post(
     return res.status(201).json(data);
   }
 );
+
+router.post("/admin/register",async(req,res)=>{
+
+  const { email, password } = req.body;
+
+  const data = await service.adminRegister(email, password);
+  return res.status(201).json(data);
+})
+
+router.post("/admin/login",async(req,res)=>{
+
+  const { email, password } = req.body;
+
+  const data = await service.adminLogin(email, password);
+  return res.status(200).json(data);
+})
+
+
+
+router.post("/forgetpassword", async (req, res) => {
+  const { email } = req.body;
+  const data = await service.forgetPassword(email);
+  return res.status(200).json(data);
+});
+
+
+router.post("/resetpassword",authMiddleware, async (req, res) => {
+  
+  const {newpassword } = req.body;
+  const userId = req.userId;
+
+  const data = await service.resetPassword(userId, newpassword);
+  return res.status(200).json(data);
+})
 
 router.get("/allusers", authMiddleware, async (req, res) => {
   const data = await service.getAllUsers();

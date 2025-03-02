@@ -7,6 +7,7 @@ const {
   TEST_QUEUE,
   TEST_RPC,
   PAYMENT_QUEUE,
+  MY_APP_FRONTEND_URL
 } = require("../config")
 const Token = require("../utils/token")
 const { getSignedUrlForRead } = require("../config/awsconfig")
@@ -291,6 +292,147 @@ class Service {
     }
   }
 
+
+  async adminRegister(email, password){
+
+    const user = await this.repository.getUser(email)
+    if (user) throw new BadRequestError("User already exists")
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const newUser = await this.repository.createAdminUser(
+      email,
+      hashedPassword,
+      "normal",
+      "admin"
+    )
+
+    const authToken = this.token.generateToken(
+      {
+        sub: newUser.public_id,
+        // country: student.country,
+        role: newUser.userrole,
+      },
+      "1d"
+    )
+
+    return {
+      message: "Admin created successfully",
+      authToken,
+    }
+  }
+
+  async adminLogin(email, password){
+
+    const user = await this.repository.getUser(email)
+    if (!user) throw new NotFoundError("User not found")
+
+      if(user.authtype != "normal")
+      throw new BadRequestError("Incorrect login method")
+
+      if(user.userrole != "admin")
+      throw new BadRequestError("User is not admin")
+
+      if (!bcrypt.compareSync(password, user.password))
+      throw new BadRequestError("Invalid password")
+
+    const authToken = this.token.generateToken(
+      {
+        sub: user.public_id,
+        // country: student.country,
+        role: user.userrole,
+      },
+      "1d"
+    )
+
+    return {
+      message: "Login successful",
+      authToken,
+    }
+
+  }
+
+
+  async sendResetPasswordEmail(email, authToken){ 
+
+    const resetLink=`${MY_APP_FRONTEND_URL}/job-interview-instructions/?authToken=${authToken}`;
+    const options = {
+      to: email,
+      subject: "Reset Your Password - [iamreadyai.com]",
+      html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
+              <h2 style="text-align: center; color: #333;">Password Reset Request</h2>
+              <p style="font-size: 16px; color: #555;">
+                  Hello, 
+              </p>
+              <p style="font-size: 16px; color: #555;">
+                  We received a request to reset your password for your <strong>[iamreadyai.com]</strong> account. Click the button below to reset your password:
+              </p>
+              <div style="text-align: center; margin: 20px 0;">
+                  <a href="${resetLink}" style="background-color: #007bff; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-size: 16px; display: inline-block;">
+                      Reset Password
+                  </a>
+              </div>
+              <p style="font-size: 16px; color: #555;">
+                  If you didn’t request this, you can ignore this email. Your password will remain the same.
+              </p>
+              <hr style="border: 0; height: 1px; background: #ddd; margin: 20px 0;">
+              <p style="font-size: 14px; text-align: center; color: #777;">
+                  If the button doesn't work, copy and paste the following link into your browser:
+                  <br>
+                  <a href="${resetLink}" style="color: #007bff; word-wrap: break-word;">${resetLink}</a>
+              </p>
+          </div>
+      `,
+  };
+  
+
+    await sendEmail(options);
+  }
+
+  async forgetPassword(email){
+
+    const user = await this.repository.getUser(email)
+    if (!user) throw new NotFoundError("User not found")
+
+      if(user.authtype != "normal")
+      throw new BadRequestError("User logged in through other social account")
+
+      const authToken = this.token.generateToken(
+        {
+          sub: user.public_id,
+          // country: student.country,
+          role: user.userrole,
+        },
+        "1d"
+      )
+
+      await this.sendResetPasswordEmail(email,authToken);
+
+      return{
+        message: "Reset password Email sent successfully",
+      }
+
+
+
+  }
+
+
+
+
+  async resetPassword(userId, newpassword){
+
+    const user = await this.repository.getUserbyid(userId)
+    if (!user) throw new NotFoundError("User not found")
+
+      const hashedPassword = await bcrypt.hash(newpassword, 10)
+
+      await this.repository.updatePassword(userId,hashedPassword)
+
+      return{
+        message: "Password updated successfully"
+      }
+
+  }
   // async rpc_test() {
   //   const data = await RPCService.request(TEST_RPC, {
   //     type: TEST_RPC,

@@ -4,7 +4,7 @@ BEGIN
         CREATE TYPE auth_type AS ENUM ('google', 'linkedin', 'github', 'twitter','normal','facebook');
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
-        CREATE TYPE user_role AS ENUM ('student', 'recruiter');
+        CREATE TYPE user_role AS ENUM ('student', 'recruiter', 'admin');
     END IF;
 END $$;
 
